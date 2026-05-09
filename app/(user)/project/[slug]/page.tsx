@@ -1,7 +1,5 @@
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import PageHero from "../../../../components/user/pageHero";
-import { Reveal, Stagger } from "../../../../components/animations";
 import Link from "next/link";
 
 async function getProject(
