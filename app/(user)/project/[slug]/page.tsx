@@ -1,22 +1,16 @@
 import { notFound } from "next/navigation";
 import PageHero from "../../../../components/user/pageHero";
 import Link from "next/link";
+import prisma from "../../../../lib/prisma";
 
-async function getProject(
-  slug: string
-) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/projects/slug/${slug}`,
-    {
-      cache: "no-store",
-    }
-  );
-
-  if (!res.ok) {
-    return null;
-  }
-
-  return res.json();
+async function getProject(slug: string) {
+  return prisma.project.findFirst({
+    where: { slug, published: true },
+    include: {
+      subCategory: { include: { category: true } },
+      gallery: { orderBy: { sortOrder: "asc" } },
+    },
+  });
 }
 
 export default async function ProjectPage({

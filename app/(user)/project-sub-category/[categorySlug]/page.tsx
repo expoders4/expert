@@ -1,17 +1,16 @@
 import Link from "next/link";
 import PageHero from "../../../../components/user/pageHero";
+import prisma from "../../../../lib/prisma";
 
-async function getSubCategory(
-    slug: string
-) {
-    const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/api/project-sub-categories/${slug}`,
-        {
-            cache: "no-store",
-        }
-    );
-
-    return res.json();
+async function getSubCategory(slug: string) {
+  return prisma.project.findMany({
+    where: { subCategory: { slug } },
+    include: {
+      subCategory: { include: { category: true } },
+      gallery: { orderBy: { sortOrder: "asc" } },
+    },
+    orderBy: { sortOrder: "asc" },
+  });
 }
 
 export default async function SubCategoryPage({

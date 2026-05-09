@@ -2,18 +2,14 @@ import Link from "next/link";
 import PageHero from "../../../../components/user/pageHero";
 import { Reveal, Stagger } from "../../../../components/animations";
 import Image from "next/image";
+import prisma from "../../../../lib/prisma";
 
-async function getCategory(
-    slug: string
-) {
-    const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/api/project-categories/${slug}`,
-        {
-            cache: "no-store",
-        }
-    );
-
-    return res.json();
+async function getCategory(slug: string) {
+  return prisma.projectSubCategory.findMany({
+    where: { category: { slug } },
+    include: { category: true },
+    orderBy: { sortOrder: "asc" },
+  });
 }
 
 export default async function CategoryPage({
