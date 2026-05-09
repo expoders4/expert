@@ -12,6 +12,7 @@ import {
 import "./globals.css";
 
 import { Toaster } from "sonner";
+import BodyWrapper from "../components/bodyWrapper";
 
 
 /* ─── Fonts ───────────────────────── */
@@ -225,7 +226,7 @@ export default function RootLayout({
   children,
 }: {
   children:
-    React.ReactNode;
+  React.ReactNode;
 }) {
 
   return (
@@ -259,9 +260,9 @@ export default function RootLayout({
       </head>
 
       <body className="antialiased">
-
-        {children}
-
+        <BodyWrapper>
+          {children}
+        </BodyWrapper>
         <Toaster
           position="top-right"
           richColors
