@@ -32,8 +32,8 @@ export default async function ProjectPage({
           label="Our Work"
           title={project.title}
           titleAccent="Project"
-          subtitle={project.description}
-          image={project.coverImage}
+          subtitle={project.description ?? ''}
+          image={project.coverImage ?? '/images/projects-hero.jpg'}
           imageAlt={`${project.slug} recognitions`}
           breadcrumbs={[
             { label: "Home", href: "/" },
