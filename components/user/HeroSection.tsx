@@ -56,7 +56,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section id="home" className="hero-section" aria-label="Hero">
+    <section id="home" className="hero-section pt-10" aria-label="Hero">
       {/* Slides */}
       {slides.map((slide, i) => (
         <div
