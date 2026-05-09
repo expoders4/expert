@@ -26,7 +26,6 @@ export default async function ProjectsPage() {
   const categories = await getCategories();
     
 
-
 return (
     <>
       <main>
