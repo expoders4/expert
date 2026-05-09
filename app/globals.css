@@ -1,0 +1,864 @@
+/* ============================================================
+   TOUGH ARCHITECTURE — GLOBAL STYLESHEET
+   Author: Next.js port of Colorlib Tough theme
+   ============================================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Google Fonts ───────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&family=Raleway:wght@200;300;400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap');
+
+/* ─── CSS Custom Properties ─────────────────────────────── */
+:root {
+  /* Brand Colors */
+  --color-primary:      #c8a96e;
+  --color-primary-light:#e8c98e;
+  --color-primary-dark: #a08040;
+  --color-dark:         #0d0d0d;
+  --color-dark2:        #161616;
+  --color-dark3:        #1f1f1f;
+  --color-dark4:        #2a2a2a;
+  --color-light:        #f5f5f0;
+  --color-light2:       #e8e8e0;
+  --color-light3:       #efefef;
+  --color-muted:        #888888;
+  --color-muted2:       #555555;
+  --color-white:        #ffffff;
+
+  /* Fonts */
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-body:    'Raleway', Helvetica, sans-serif;
+  --font-mono:    'DM Mono', monospace;
+
+  /* Transitions */
+  --transition-fast:   0.2s ease;
+  --transition-base:   0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow:   0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-expo:   0.9s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Spacing */
+  --section-py: 7rem;
+  --container-px: 1.5rem;
+
+  /* Nav height */
+  --nav-h: 90px;
+}
+
+/* ─── Reset & Base ─────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+body .user-body {
+  background-color: var(--color-dark);
+  color: var(--color-light);
+}
+
+body .admin-body {
+  background-color: var(--color-light3);
+  color: var(--color-dark);
+}
+
+/* ─── Typography Base ───────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--color-white);
+  letter-spacing: -0.01em;
+}
+
+p {
+  color: var(--color-muted);
+  font-weight: 300;
+  line-height: 1.8;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+img, video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+}
+
+input, textarea, select {
+  font-family: var(--font-body);
+}
+
+::selection {
+  background-color: var(--color-primary);
+  color: var(--color-dark);
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 2px;
+}
+
+/* ─── Font Variable References (for Tailwind) ───────────── */
+.font-heading { font-family: var(--font-heading); }
+.font-body    { font-family: var(--font-body); }
+.font-mono    { font-family: var(--font-mono); }
+
+/* ─── Container Utility ─────────────────────────────────── */
+@layer components {
+  .container-tight {
+    @apply max-w-7xl mx-auto px-6 lg:px-10;
+  }
+
+  .container-wide {
+    @apply max-w-[1400px] mx-auto px-6 lg:px-12;
+  }
+
+  /* ── Section Label ────── */
+  .section-label {
+    @apply inline-flex items-center gap-3 mb-4;
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+  }
+
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--color-primary);
+  }
+
+  /* ── Section Heading ────── */
+  .section-heading {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    color: var(--color-white);
+    line-height: 1.1;
+  }
+
+  .section-heading span {
+    color: var(--color-primary);
+    font-style: italic;
+  }
+
+  /* ── Gold Divider ─────── */
+  .gold-divider {
+    @apply block mt-5 mb-0;
+    width: 60px;
+    height: 2px;
+    background: var(--color-primary);
+  }
+
+  /* ── Btn Primary ──────── */
+  .btn-primary {
+    @apply inline-flex items-center gap-3 px-10 py-4 font-body;
+    background: var(--color-primary);
+    color: var(--color-dark);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--color-white);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--transition-base);
+    z-index: 0;
+  }
+
+  .btn-primary:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  .btn-primary > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .btn-primary:hover {
+    color: var(--color-dark);
+  }
+
+  /* ── Btn Outline ──────── */
+  .btn-outline {
+    @apply inline-flex items-center gap-3 px-10 py-4;
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-outline::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--color-primary);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--transition-base);
+    z-index: 0;
+  }
+
+  .btn-outline:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  .btn-outline > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .btn-outline:hover {
+    color: var(--color-dark);
+  }
+
+  /* ── Card Surface ─────── */
+  .card-surface {
+    background: var(--color-dark3);
+    border: 1px solid var(--color-dark4);
+    transition: border-color var(--transition-base), transform var(--transition-base);
+  }
+
+  .card-surface:hover {
+    border-color: var(--color-primary);
+  }
+
+  /* ── Gold Text ────────── */
+  .text-gold {
+    color: var(--color-primary);
+  }
+
+  /* ── Overlay helper ───── */
+  .overlay-dark {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(13,13,13,0.5) 0%, rgba(13,13,13,0.8) 100%);
+  }
+
+  .overlay-dark-strong {
+    position: absolute;
+    inset: 0;
+    background: rgba(13,13,13,0.75);
+  }
+}
+
+/* ─── Scroll Animations ─────────────────────────────────── */
+@layer utilities {
+  .animate-delay-100  { animation-delay: 0.1s; }
+  .animate-delay-200  { animation-delay: 0.2s; }
+  .animate-delay-300  { animation-delay: 0.3s; }
+  .animate-delay-400  { animation-delay: 0.4s; }
+  .animate-delay-500  { animation-delay: 0.5s; }
+  .animate-delay-600  { animation-delay: 0.6s; }
+  .animate-delay-700  { animation-delay: 0.7s; }
+  .animate-delay-800  { animation-delay: 0.8s; }
+
+  .animate-fill-both  { animation-fill-mode: both; }
+
+  /* Reveal on scroll — controlled via IntersectionObserver + JS class toggle */
+  .reveal {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1),
+                transform 0.8s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-left {
+    opacity: 0;
+    transform: translateX(-60px);
+    transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1),
+                transform 0.9s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal-left.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .reveal-right {
+    opacity: 0;
+    transform: translateX(60px);
+    transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1),
+                transform 0.9s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal-right.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .reveal-scale {
+    opacity: 0;
+    transform: scale(0.92);
+    transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1),
+                transform 0.8s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal-scale.visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Stagger children */
+  .stagger-children > *:nth-child(1) { transition-delay: 0s; }
+  .stagger-children > *:nth-child(2) { transition-delay: 0.12s; }
+  .stagger-children > *:nth-child(3) { transition-delay: 0.24s; }
+  .stagger-children > *:nth-child(4) { transition-delay: 0.36s; }
+  .stagger-children > *:nth-child(5) { transition-delay: 0.48s; }
+  .stagger-children > *:nth-child(6) { transition-delay: 0.60s; }
+
+  /* Clip paths for skewed sections */
+  .clip-angle-bottom {
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 60px), 0 100%);
+  }
+  .clip-angle-top {
+    clip-path: polygon(0 60px, 100% 0, 100% 100%, 0 100%);
+  }
+}
+
+/* ─── Navbar ────────────────────────────────────────────── */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  transition: background var(--transition-base),
+              border-color var(--transition-base),
+              height var(--transition-base);
+}
+
+.navbar.scrolled {
+  background: rgba(13, 13, 13, 0.97);
+  border-bottom: 1px solid var(--color-dark4);
+  height: 70px;
+  backdrop-filter: blur(12px);
+}
+
+.nav-link {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.75);
+  transition: color var(--transition-fast);
+  position: relative;
+  padding-bottom: 2px;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--color-primary);
+  transition: width var(--transition-base);
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--color-primary);
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* ─── Hero Section ──────────────────────────────────────── */
+.hero-section {
+  position: relative;
+  height: 100vh;
+  min-height: 700px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform 8s ease;
+}
+
+.hero-bg.zoomed {
+  transform: scale(1.08);
+}
+
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+.hero-slide.active {
+  opacity: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+}
+
+/* ─── Portfolio Grid ────────────────────────────────────── */
+.portfolio-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.portfolio-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.portfolio-item:hover img {
+  transform: scale(1.08);
+}
+
+.portfolio-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(13,13,13,0.95) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.portfolio-item:hover .portfolio-overlay {
+  opacity: 1;
+}
+
+.portfolio-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2rem;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all var(--transition-base);
+}
+
+.portfolio-item:hover .portfolio-info {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ─── Stats Counter ─────────────────────────────────────── */
+.stat-number {
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+/* ─── Testimonials ──────────────────────────────────────── */
+.testimonial-card {
+  background: var(--color-dark3);
+  border: 1px solid var(--color-dark4);
+  padding: 2.5rem;
+  position: relative;
+  transition: border-color var(--transition-base);
+}
+
+.testimonial-card::before {
+  content: '\201C';
+  font-family: var(--font-heading);
+  font-size: 5rem;
+  color: var(--color-primary);
+  opacity: 0.3;
+  position: absolute;
+  top: 1rem;
+  left: 2rem;
+  line-height: 1;
+}
+
+.testimonial-card:hover {
+  border-color: var(--color-primary);
+}
+
+/* ─── Service Cards ─────────────────────────────────────── */
+.service-card {
+  background: var(--color-dark3);
+  border: 1px solid var(--color-dark4);
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-base);
+}
+
+.service-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background: var(--color-primary);
+  transition: width var(--transition-base);
+}
+
+.service-card:hover::after {
+  width: 100%;
+}
+
+.service-card:hover {
+  border-color: var(--color-dark4);
+  transform: translateY(-6px);
+}
+
+.service-icon {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-dark4);
+  margin-bottom: 1.5rem;
+  transition: all var(--transition-base);
+  color: var(--color-primary);
+}
+
+.service-card:hover .service-icon {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-dark);
+}
+
+/* ─── Pricing Cards ─────────────────────────────────────── */
+.pricing-card {
+  background: var(--color-dark3);
+  border: 1px solid var(--color-dark4);
+  padding: 3rem 2rem;
+  text-align: center;
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.pricing-card.featured {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.pricing-card.featured * {
+  color: var(--color-dark) !important;
+}
+
+.pricing-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--color-primary);
+}
+
+.price-number {
+  font-family: var(--font-heading);
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* ─── Contact Form ──────────────────────────────────────── */
+.form-input {
+  width: 100%;
+  background: var(--color-dark3);
+  border: 1px solid var(--color-dark4);
+  color: var(--color-white);
+  padding: 1rem 1.25rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  outline: none;
+  transition: border-color var(--transition-base);
+  resize: none;
+}
+
+.form-input:focus {
+  border-color: var(--color-primary);
+}
+
+.form-input::placeholder {
+  color: var(--color-muted2);
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+}
+
+/* ─── Footer ────────────────────────────────────────────── */
+.footer-link {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: var(--color-muted);
+  letter-spacing: 0.05em;
+  transition: color var(--transition-fast);
+}
+
+.footer-link:hover {
+  color: var(--color-primary);
+}
+
+/* ─── Hamburger ─────────────────────────────────────────── */
+.hamburger-line {
+  display: block;
+  width: 24px;
+  height: 1.5px;
+  background: var(--color-white);
+  transition: all var(--transition-base);
+  transform-origin: center;
+}
+
+/* ─── Mobile Menu ───────────────────────────────────────── */
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  background: var(--color-dark);
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  transform: translateX(100%);
+  transition: transform var(--transition-expo);
+}
+
+.mobile-menu.open {
+  transform: translateX(0);
+}
+
+.mobile-nav-link {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  color: var(--color-white);
+  transition: color var(--transition-fast);
+  letter-spacing: -0.02em;
+}
+
+.mobile-nav-link:hover {
+  color: var(--color-primary);
+}
+
+/* ─── Hero Slider Dots ──────────────────────────────────── */
+.slider-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+
+.slider-dot.active {
+  background: var(--color-primary);
+  width: 28px;
+  border-radius: 4px;
+}
+
+/* ─── Section BG Variants ───────────────────────────────── */
+.section-dark   { background: var(--color-dark); }
+.section-dark2  { background: var(--color-dark2); }
+.section-dark3  { background: var(--color-dark3); }
+
+/* ─── Responsive Utilities ──────────────────────────────── */
+@media (max-width: 768px) {
+  :root {
+    --section-py: 4.5rem;
+    --nav-h: 70px;
+  }
+
+  .section-heading {
+    font-size: clamp(1.75rem, 6vw, 2.5rem);
+  }
+}
+
+/* ─── Noise Texture Overlay ─────────────────────────────── */
+.noise::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ─── Print ─────────────────────────────────────────────── */
+@media print {
+  .navbar, .mobile-menu { display: none; }
+  body { background: white; color: black; }
+}
+
+.contact-input{
+  width:100%;
+  background:transparent;
+  border:1px solid var(--color-dark4);
+  color:var(--color-white);
+  padding:16px 18px;
+  font-size:.9rem;
+  transition:.3s;
+}
+
+.contact-input::placeholder{
+  color:var(--color-muted);
+}
+
+.contact-input:focus{
+  outline:none;
+  border-color:var(--color-primary);
+}
+
+
+
+
+/* =========================================================
+   ADMIN LAYOUT
+========================================================= */
+
+.admin-layout {
+  min-height: 100vh;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.admin-card {
+  background: white;
+  border: 1px solid #e7e5e4;
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+.admin-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #292524;
+  margin-bottom: 8px;
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.admin-input {
+  width: 100%;
+  border: 1px solid #d6d3d1;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+  background: white;
+  color: #1c1917;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.admin-input:focus {
+  border-color: #0f172a;
+  box-shadow: 0 0 0 3px rgba(15,23,42,0.08);
+}
+
+
+/* =========================================================
+   BRAND COLORS
+========================================================= */
+
+.border-brand-300 {
+  border-color: #c084fc;
+}
+
+.bg-brand-50 {
+  background: #faf5ff;
+}
+
+.text-brand-700 {
+  color: #7e22ce;
+}
+
+.fill-brand-500 {
+  fill: #a855f7;
+}
+
+.text-brand-600 {
+  color: #9333ea;
+}
