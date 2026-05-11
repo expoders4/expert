@@ -1,9 +1,13 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import PageHero from "../../../../components/user/pageHero";
 import Link from "next/link";
 import prisma from "../../../../lib/prisma";
+import { cache } from "react";
 
-async function getProject(slug: string) {
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tougharchitects.com";
+
+const getProject = cache(async (slug: string) => {
   return prisma.project.findFirst({
     where: { slug, published: true },
     include: {
@@ -11,6 +15,45 @@ async function getProject(slug: string) {
       gallery: { orderBy: { sortOrder: "asc" } },
     },
   });
+});
+
+export async function generateMetadata({ params }: any): Promise<Metadata> {
+  const project = await getProject(params.slug);
+  if (!project) return { title: "Project Not Found" };
+
+  const description =
+    project.description ??
+    project.shortDescription ??
+    `${project.title} — Architecture project by TOUGH Architects.`;
+
+  return {
+    title: project.metaTitle ?? project.title,
+    description: project.metaDescription ?? description,
+    keywords: [
+      project.title,
+      project.subCategory?.category?.name ?? "architecture",
+      project.subCategory?.name ?? "design",
+      project.location ?? "India",
+      "TOUGH Architects",
+      "architecture project",
+    ].filter(Boolean) as string[],
+    alternates: { canonical: `${siteUrl}/project/${project.slug}` },
+    openGraph: {
+      title: project.title,
+      description,
+      url: `${siteUrl}/project/${project.slug}`,
+      type: "article",
+      images: project.coverImage
+        ? [{ url: project.coverImage, width: 1200, height: 630 }]
+        : [{ url: `${siteUrl}/og-image.jpg`, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: project.title,
+      description,
+      images: project.coverImage ? [project.coverImage] : [`${siteUrl}/og-image.jpg`],
+    },
+  };
 }
 
 export default async function ProjectPage({
@@ -47,147 +90,114 @@ export default async function ProjectPage({
           style={{ padding: "var(--section-py) 0" }}
         >
           <div className="container-wide">
-            <div className="flex gap-10">
-              <div className=" flex-1">
+
+            <div className="flex flex-col lg:flex-row gap-6 lg:gap-10">
+
+              <div className="flex-1 min-w-0">
                 <div className="grid gap-4">
-                  <div className="grid gap-px"
+                  <div
+                    className="grid gap-px grid-cols-1 md:grid-cols-2"
                     style={{
-                      gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 380px), 1fr))',
                       background: 'var(--color-dark4)',
-                    }}>
+                    }}
+                  >
+                    {project?.gallery.map((project: any, i: number) => {
+                      const spanClass =
+                        i % 4 === 0
+                          ? 'md:row-span-2'
+                          : i % 4 === 1
+                            ? 'md:row-span-1'
+                            : i % 4 === 2
+                              ? 'md:row-span-1'
+                              : 'md:row-span-2';
 
-                    {project?.gallery.map((project: any) => (
-                      <Link
-                        key={project.id}
-                        href={`/project/${project.slug}`}
-                        className="group block"
-                      >
-                        <div className="relative h-[500px] overflow-hidden">
+                      const heightClass =
+                        i % 4 === 0
+                          ? 'h-[600px]'
+                          : i % 4 === 1
+                            ? 'h-[280px]'
+                            : i % 4 === 2
+                              ? 'h-[420px]'
+                              : 'h-[600px]';
 
-                          {/* Background image */}
+                      return (
+                        <Link
+                          key={project.id}
+                          href={`/project/${project.slug}`}
+                          className={`group block ${spanClass}`}
+                        >
                           <div
-                            className="
-                                        absolute inset-0
-                                        bg-cover bg-center
-                                        transition-all duration-700
-                                        scale-100 group-hover:scale-110
-                                      "
-                            style={{
-                              backgroundImage: `url(${project.image})`,
-                            }}
-                          />
+                            className={`relative ${heightClass} overflow-hidden`}
+                          >
 
-                          {/* Main luxury overlay */}
-                          <div
-                            className="
-                                        absolute inset-0
-                                        opacity-0 group-hover:opacity-100
-                                        transition-all duration-700
-                                        bg-gradient-to-t
-                                        from-black via-black/40 to-transparent
-                                        backdrop-blur-[2px]
-                                      "
-                          />
+                            {/* Background image */}
+                            <div
+                              className="
+              absolute inset-0
+              bg-cover bg-center
+              transition-all duration-700
+              scale-100 group-hover:scale-110
+            "
+                              style={{
+                                backgroundImage: `url(${project.image})`,
+                              }}
+                            />
 
-                          {/* Diagonal sweep */}
-                          <div className="absolute top-0 -left-[120%] w-[60%] h-full bg-white/10 skew-x-[-25deg] group-hover:left-[160%] transition-all duration-1000" />
+                            {/* Main luxury overlay */}
+                            <div
+                              className="
+              absolute inset-0
+              opacity-0 group-hover:opacity-100
+              transition-all duration-700
+              bg-gradient-to-t
+              from-black via-black/40 to-transparent
+              backdrop-blur-[2px]
+            "
+                            />
 
-                          {/* Gold border animation */}
-                          <div className="absolute inset-6 border border-transparent group-hover:border-[var(--color-primary)] transition-all duration-700" />
+                            {/* Diagonal sweep */}
+                            <div className="absolute top-0 -left-[120%] w-[60%] h-full bg-white/10 skew-x-[-25deg] group-hover:left-[160%] transition-all duration-1000" />
 
-                          {/* Content */}
-                          <div className="absolute inset-0 z-20 flex items-end p-10" >
-                            <div className="translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700">
-                              {/* Title */}
-                              <h3
-                                style={{
-                                  fontFamily:
-                                    "var(--font-playfair)",
-                                  fontSize: "1.8rem",
-                                  fontWeight: 700,
-                                  color:
-                                    "var(--color-white)",
-                                  marginBottom: ".5rem",
-                                }}
-                              >
-                                {project.title}
-                              </h3>
+                            {/* Gold border animation */}
+                            <div className="absolute inset-6 border border-transparent group-hover:border-[var(--color-primary)] transition-all duration-700" />
 
-                              {/* description */}
-                              <p
-                                style={{
-                                  fontSize: ".85rem",
-                                  color:
-                                    "rgba(255,255,255,.75)",
-                                }}
-                              >
-                                {project.description}
-                              </p>
+                            {/* Content */}
+                            <div className="absolute inset-0 z-20 flex items-end p-6 md:p-10">
+                              <div className="translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700">
 
+                                <h3
+                                  style={{
+                                    fontFamily: "var(--font-playfair)",
+                                    fontSize: "1.8rem",
+                                    fontWeight: 700,
+                                    color: "var(--color-white)",
+                                    marginBottom: ".5rem",
+                                  }}
+                                >
+                                  {project.title}
+                                </h3>
+
+                                <p
+                                  style={{
+                                    fontSize: ".85rem",
+                                    color: "rgba(255,255,255,.75)",
+                                  }}
+                                >
+                                  {project.description}
+                                </p>
+
+                              </div>
                             </div>
+
                           </div>
-                        </div>
-                      </Link>
-                      // <Reveal key={project.slug}>
-                      //   <Link
-                      //     href={`/project-category/${project?.slug}`}
-                      //     className="group block"
-                      //   >
-                      //     <article
-                      //       className="card-surface overflow-hidden"
-                      //     >
-                      //       <div
-                      //         className="relative overflow-hidden"
-                      //         style={{ aspectRatio: "16/10" }}
-                      //       >
-                      //         <Image
-                      //           src={project.image}
-                      //           alt={project.name}
-                      //           fill
-                      //           className="object-cover transition-transform duration-700 group-hover:scale-105 w-100"
-                      //         />
-                      //       </div>
-
-                      //       <div className="p-8">
-
-                      //         <p className="section-label">
-                      //           {project.slug}
-                      //         </p>
-
-                      //         <h2
-                      //           className="mt-3"
-                      //           style={{
-                      //             fontFamily:
-                      //               "var(--font-playfair)",
-                      //             fontSize: "1.6rem",
-                      //             color:
-                      //               "var(--color-white)",
-                      //           }}
-                      //         >
-                      //           {project.name}
-                      //         </h2>
-
-                      //         <p
-                      //           className="mt-4"
-                      //           style={{
-                      //             fontSize: ".9rem",
-                      //             lineHeight: 1.8,
-                      //           }}
-                      //         >
-                      //           {project.description}
-                      //         </p>
-
-                      //       </div>
-
-                      //     </article>
-                      //   </Link>
-
-                      // </Reveal>
-                    ))}
+                        </Link>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
-              <aside className="w-[280px] shrink-0 space-y-6 sticky top-20">
+
+              <aside className="w-full lg:w-[280px] shrink-0 space-y-6 lg:sticky lg:top-20">
 
                 <div>
                   <h2
@@ -217,12 +227,14 @@ export default async function ProjectPage({
                   <p className="section-label">
                     {project.subCategory?.category?.name}
                   </p>
+
                   <p style={{ opacity: 0.7 }}>
                     {project.subCategory?.name}
                   </p>
                 </div>
 
               </aside>
+
             </div>
           </div>
         </section>

@@ -1,8 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import PageHero from "../../../../components/user/pageHero";
 import prisma from "../../../../lib/prisma";
+import { cache } from "react";
 
-async function getSubCategory(slug: string) {
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tougharchitects.com";
+
+const getSubCategory = cache(async (slug: string) => {
   return prisma.project.findMany({
     where: { subCategory: { slug } },
     include: {
@@ -11,6 +15,24 @@ async function getSubCategory(slug: string) {
     },
     orderBy: { sortOrder: "asc" },
   });
+});
+
+export async function generateMetadata({ params }: any): Promise<Metadata> {
+  const items = await getSubCategory(params.categorySlug);
+  const subCatName = items[0]?.subCategory?.name ?? params.categorySlug;
+  const catName = items[0]?.subCategory?.category?.name ?? "Architecture";
+
+  return {
+    title: `${subCatName} — ${catName} Projects | TOUGH Architects`,
+    description: `Browse TOUGH Architects' ${subCatName} projects under ${catName} — crafted with purpose and precision.`,
+    alternates: { canonical: `${siteUrl}/project-sub-category/${params.categorySlug}` },
+    openGraph: {
+      title: `${subCatName} — TOUGH Architects`,
+      description: `${subCatName} architecture projects by TOUGH Architects.`,
+      url: `${siteUrl}/project-sub-category/${params.categorySlug}`,
+      type: "website",
+    },
+  };
 }
 
 export default async function SubCategoryPage({

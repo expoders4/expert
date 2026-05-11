@@ -4,70 +4,40 @@ import { useEffect, useRef, useState } from 'react';
 
 const categories = ['All', 'Residential', 'Commercial', 'Interior', 'Cultural'];
 
-const projects = [
-  {
-    id: 1,
-    title: 'Marble Peak Residence',
-    category: 'Residential',
-    location: 'Aspen, Colorado',
-    year: '2023',
-    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80',
-    featured: true,
-  },
-  {
-    id: 2,
-    title: 'The Obsidian Tower',
-    category: 'Commercial',
-    location: 'Manhattan, New York',
-    year: '2022',
-    image: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80',
-    featured: false,
-  },
-  {
-    id: 3,
-    title: 'Volta Cultural Centre',
-    category: 'Cultural',
-    location: 'Lisbon, Portugal',
-    year: '2023',
-    image: 'https://images.unsplash.com/photo-1614267157481-ca2b81ac6fcc?w=800&q=80',
-    featured: false,
-  },
-  {
-    id: 4,
-    title: 'Kyoto Wellness Retreat',
-    category: 'Interior',
-    location: 'Kyoto, Japan',
-    year: '2022',
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
-    featured: false,
-  },
-  {
-    id: 5,
-    title: 'Harbour House',
-    category: 'Residential',
-    location: 'Sydney, Australia',
-    year: '2021',
-    image: 'https://images.unsplash.com/photo-1510627489930-0c1b0bfb6785?w=800&q=80',
-    featured: false,
-  },
-  {
-    id: 6,
-    title: 'Zenith Office Campus',
-    category: 'Commercial',
-    location: 'Munich, Germany',
-    year: '2023',
-    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80',
-    featured: false,
-  },
-];
+type ProjectType = {
+  id: string;
+  slug: string;
+  title: string;
+  location?: string | null;
+  year?: number | null;
+  thumbnail?: string | null;
+  featured?: boolean;
+  subCategory?: {
+    id: string;
+    name: string;
+    slug: string;
+    sortOrder: number;
+    description: string | null;
+    image: string | null;
+    categoryId: string;
+    createdAt: Date;
+    updatedAt: Date;
+  } | null;
+};
 
-export default function PortfolioSection() {
+export default function PortfolioSection({
+  projects,
+}: {
+  projects: ProjectType[];
+}) {
   const [active, setActive] = useState('All');
   const sectionRef = useRef<HTMLElement>(null);
-
   const filtered = projects.filter(
-    (p) => active === 'All' || p.category === active
+    (p) =>
+      active === 'All' ||
+      p.subCategory?.name === active
   );
+
   useEffect(() => {
     const timer = setTimeout(() => {
       if (sectionRef.current) {
@@ -87,25 +57,25 @@ export default function PortfolioSection() {
   }, [active]);
 
   useEffect(() => {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target
-            .querySelectorAll('.reveal, .reveal-scale')
-            .forEach((el, i) =>
-              setTimeout(() => el.classList.add('visible'), i * 80)
-            );
-        }
-      });
-    },
-    { threshold: 0.05 }
-  );
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target
+              .querySelectorAll('.reveal, .reveal-scale')
+              .forEach((el, i) =>
+                setTimeout(() => el.classList.add('visible'), i * 80)
+              );
+          }
+        });
+      },
+      { threshold: 0.05 }
+    );
 
-  if (sectionRef.current) observer.observe(sectionRef.current);
+    if (sectionRef.current) observer.observe(sectionRef.current);
 
-  return () => observer.disconnect();
-}, []);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <section
@@ -116,6 +86,7 @@ export default function PortfolioSection() {
       aria-labelledby="portfolio-heading"
     >
       <div className="container-wide">
+
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
           <div>
@@ -171,15 +142,17 @@ export default function PortfolioSection() {
                 gridColumn: project.featured && i === 0 ? 'span 2' : 'span 1',
                 cursor: 'pointer',
               }}
-              aria-label={`${project.title} — ${project.category}`}
+              aria-label={`${project.title} — ${project.subCategory?.name || ''}`}
             >
               <div
                 className="relative w-full h-full bg-cover bg-center"
                 style={{
-                  backgroundImage: `url(${project.image})`,
+                  backgroundImage: `url(${project.thumbnail || ''})`,
                 }}
               />
+
               <div className="portfolio-overlay" />
+
               <div className="portfolio-info">
                 <p
                   style={{
@@ -192,8 +165,9 @@ export default function PortfolioSection() {
                     marginBottom: '0.4rem',
                   }}
                 >
-                  {project.category} · {project.year}
+                  {project.subCategory?.name} · {project.year}
                 </p>
+
                 <h3
                   style={{
                     fontFamily: 'var(--font-playfair)',
@@ -205,12 +179,35 @@ export default function PortfolioSection() {
                 >
                   {project.title}
                 </h3>
-                <p style={{ fontSize: '0.75rem', color: 'rgba(245,245,240,0.6)', fontWeight: 300 }}>
+
+                <p
+                  style={{
+                    fontSize: '0.75rem',
+                    color: 'rgba(245,245,240,0.6)',
+                    fontWeight: 300,
+                  }}
+                >
                   {project.location}
                 </p>
+
                 <div className="flex items-center gap-2 mt-3">
-                  <span style={{ width: '24px', height: '1px', background: 'var(--color-primary)' }} />
-                  <span style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--color-primary)' }}>
+                  <span
+                    style={{
+                      width: '24px',
+                      height: '1px',
+                      background: 'var(--color-primary)',
+                    }}
+                  />
+
+                  <span
+                    style={{
+                      fontSize: '0.65rem',
+                      fontWeight: 700,
+                      letterSpacing: '0.15em',
+                      textTransform: 'uppercase',
+                      color: 'var(--color-primary)',
+                    }}
+                  >
                     View Project
                   </span>
                 </div>
@@ -223,7 +220,15 @@ export default function PortfolioSection() {
         <div className="text-center mt-14 reveal">
           <button className="btn-outline">
             <span>View All Projects</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
           </button>

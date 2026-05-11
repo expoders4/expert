@@ -1,8 +1,41 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import PageHero from "../../../components/user/pageHero";
 import { Reveal, Stagger } from "../../../components/animations";
 import Image from "next/image";
 import prisma from "../../../lib/prisma";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tougharchitects.com";
+
+export const metadata: Metadata = {
+  title: "Projects — Architecture & Interior Design Portfolio",
+  description:
+    "Explore TOUGH Architects' portfolio of residential, commercial, hospital, institutional, and interior design projects crafted across India.",
+  keywords: [
+    "architecture portfolio India",
+    "architecture projects Surat",
+    "residential architecture",
+    "commercial architecture",
+    "interior design projects",
+    "institutional architecture",
+    "hospital design",
+    "TOUGH Architects portfolio",
+  ],
+  alternates: { canonical: `${siteUrl}/project` },
+  openGraph: {
+    title: "Projects — TOUGH Architects Portfolio",
+    description:
+      "Award-winning architecture and interior design projects across residential, commercial, hospitality, and cultural sectors.",
+    url: `${siteUrl}/project`,
+    type: "website",
+    images: [{ url: `${siteUrl}/og-image.jpg`, width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Projects — TOUGH Architects Portfolio",
+    description: "Architecture and interior design projects across India.",
+  },
+};
 
 async function getCategories() {
   return prisma.projectCategory.findMany({

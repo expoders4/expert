@@ -5,7 +5,6 @@ import PageHero from '../../../components/user/pageHero';
 import { Reveal } from '../../../components/animations';
 
 
-
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ||
   'https://tougharchitects.com';
@@ -15,6 +14,15 @@ export const metadata: Metadata = {
   title: 'Client Testimonials — Trust Built Through Design',
   description:
     'Read what homeowners, developers, hospitality brands, and global partners say about working with TOUGH Architects.',
+
+  keywords: [
+    'architect client reviews India',
+    'architecture firm testimonials',
+    'TOUGH Architects reviews',
+    'client feedback architecture',
+    'residential architecture reviews',
+    'interior design testimonials',
+  ],
 
   alternates: {
     canonical: `${siteUrl}/testimonials`,
@@ -41,75 +49,6 @@ const jsonLd = {
 };
 
 
-const testimonials = [
-  {
-    quote:
-      'TOUGH transformed our vision into architecture that feels timeless. Every detail was intentional.',
-
-    name:
-      'Sarah Mitchell',
-
-    company:
-      'Private Residence, New York',
-  },
-
-  {
-    quote:
-      'Working with this team was seamless. Design integrity never once compromised execution.',
-
-    name:
-      'Daniel Ross',
-
-    company:
-      'Ross Development Group',
-  },
-
-  {
-    quote:
-      'Their understanding of emotion, light, and material changed how we think about hospitality.',
-
-    name:
-      'Maria Alvarez',
-
-    company:
-      'Volta Hotels',
-  },
-
-  {
-    quote:
-      'Every milestone was delivered with precision, transparency, and extraordinary craftsmanship.',
-
-    name:
-      'James Thornton',
-
-    company:
-      'Thornton Estates',
-  },
-
-  {
-    quote:
-      'They didn’t simply design a building — they created an experience people remember.',
-
-    name:
-      'Naoko Fujita',
-
-    company:
-      'Kyoto Cultural Foundation',
-  },
-
-  {
-    quote:
-      'From concept to completion, the studio exceeded every expectation we had.',
-
-    name:
-      'Michael Brooks',
-
-    company:
-      'Brooks Commercial',
-  },
-];
-
-
 const stats = [
   {
     number: '520+',
@@ -130,7 +69,43 @@ const stats = [
 ];
 
 
-export default function TestimonialsPage() {
+/* ─── Types ──────────────────────────────────────────────── */
+interface Testimonial {
+  id: string;
+  name: string;
+  role: string | null;
+  company: string | null;
+  avatar: string | null;
+  content: string;
+  rating: number;
+  featured: boolean;
+  published: boolean;
+  sortOrder: number;
+}
+
+/* ─── Data Fetching ──────────────────────────────────────── */
+async function getTestimonials(): Promise<Testimonial[]> {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const res = await fetch(`${baseUrl}/api/testimonials`, {
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.success
+      ? (json.data as Testimonial[])
+          .filter((t) => t.published)
+          .sort((a, b) => a.sortOrder - b.sortOrder)
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+
+export default async function TestimonialsPage() {
+  const testimonials = await getTestimonials();
+
   return (
     <>
       <script
@@ -213,94 +188,98 @@ export default function TestimonialsPage() {
 
 
         {/* TESTIMONIAL GRID */}
-        <section
-          className="section-dark"
-          style={{
-            padding:
-              'var(--section-py) 0',
-          }}
-        >
-          <div className="container-wide">
+        {testimonials.length > 0 && (
+          <section
+            className="section-dark"
+            style={{
+              padding:
+                'var(--section-py) 0',
+            }}
+          >
+            <div className="container-wide">
 
-            <div
-              className="grid md:grid-cols-2 xl:grid-cols-3 gap-px"
-            >
-              {testimonials.map(
-                (item) => (
-                  <article
-                    key={item.name}
-                    className="service-card"
-                    style={{
-                      padding:
-                        '2.5rem',
-                    }}
-                  >
-
-                    <p
+              <div
+                className="grid md:grid-cols-2 xl:grid-cols-3 gap-px"
+              >
+                {testimonials.map(
+                  (item) => (
+                    <article
+                      key={item.id}
+                      className="service-card"
                       style={{
-                        fontSize:
-                          '3rem',
-                        color:
-                          'var(--color-primary)',
-                        lineHeight:
-                          1,
+                        padding:
+                          '2.5rem',
                       }}
                     >
-                      “
-                    </p>
-
-
-                    <p
-                      style={{
-                        fontSize:
-                          '.85rem',
-                        lineHeight:
-                          '1.9',
-                      }}
-                    >
-                      {item.quote}
-                    </p>
-
-
-                    <div
-                      className="mt-8"
-                    >
-                      <h3
-                        style={{
-                          fontFamily:
-                            'var(--font-playfair)',
-                          color:
-                            'white',
-                          fontSize:
-                            '1rem',
-                        }}
-                      >
-                        {item.name}
-                      </h3>
 
                       <p
                         style={{
+                          fontSize:
+                            '3rem',
                           color:
                             'var(--color-primary)',
-                          fontSize:
-                            '.7rem',
-                          letterSpacing:
-                            '.15em',
-                          marginTop:
-                            '.5rem',
+                          lineHeight:
+                            1,
                         }}
                       >
-                        {item.company}
+                        "
                       </p>
-                    </div>
 
-                  </article>
-                )
-              )}
+
+                      <p
+                        style={{
+                          fontSize:
+                            '.85rem',
+                          lineHeight:
+                            '1.9',
+                        }}
+                      >
+                        {item.content}
+                      </p>
+
+
+                      <div
+                        className="mt-8"
+                      >
+                        <h3
+                          style={{
+                            fontFamily:
+                              'var(--font-playfair)',
+                            color:
+                              'white',
+                            fontSize:
+                              '1rem',
+                          }}
+                        >
+                          {item.name}
+                        </h3>
+
+                        {(item.role || item.company) && (
+                          <p
+                            style={{
+                              color:
+                                'var(--color-primary)',
+                              fontSize:
+                                '.7rem',
+                              letterSpacing:
+                                '.15em',
+                              marginTop:
+                                '.5rem',
+                            }}
+                          >
+                            {[item.role, item.company].filter(Boolean).join(', ')}
+                          </p>
+                        )}
+                      </div>
+
+                    </article>
+                  )
+                )}
+              </div>
+
             </div>
-
-          </div>
-        </section>
+          </section>
+        )}
 
 
 
@@ -400,7 +379,7 @@ export default function TestimonialsPage() {
 
             <Reveal delay={0.2}>
               <h2 className="section-heading mt-3">
-                Let’s Create
+                Let's Create
                 <span>
                   Something Extraordinary
                 </span>

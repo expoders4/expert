@@ -18,10 +18,34 @@ import {
   Stagger,
 } from "../../../components/animations";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tougharchitects.com";
+
 export const metadata: Metadata = {
   title: "Contact Us — TOUGH Architects",
   description:
-    "Start a conversation with TOUGH Architects.",
+    "Get in touch with TOUGH Architects to discuss your residential, commercial, interior, or institutional design project. Based in Surat, Gujarat, India.",
+  keywords: [
+    "contact architect India",
+    "hire architect Surat",
+    "architecture firm contact",
+    "interior design enquiry",
+    "project consultation architect",
+    "TOUGH Architects contact",
+  ],
+  alternates: { canonical: `${siteUrl}/contact` },
+  openGraph: {
+    title: "Contact TOUGH Architects",
+    description:
+      "Start a conversation about your project. Our team replies within 24 hours.",
+    url: `${siteUrl}/contact`,
+    type: "website",
+    images: [{ url: `${siteUrl}/og-image.jpg`, width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact TOUGH Architects",
+    description: "Reach out to discuss your architecture or interior design project.",
+  },
 };
 
 const contactDetails = [
@@ -82,10 +106,10 @@ export default function ContactPage() {
 
         {/* CONTACT */}
         <section
-          className="section-dark"
+          className="section-dark "
           style={{ padding: "var(--section-py) 0" }}
         >
-          <div className="container-wide px-4 sm:px-6 lg:px-0">
+          <div className="container-wide">
 
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-16">
 
@@ -268,7 +292,7 @@ export default function ContactPage() {
               "1px solid var(--color-dark4)",
           }}
         >
-          <div className="container-wide px-4 sm:px-6 lg:px-0">
+          <div className="container-wide">
 
             <Reveal>
               <div className="text-center mb-10 sm:mb-12">
@@ -315,55 +339,6 @@ export default function ContactPage() {
 
           </div>
         </section>
-
-        {/* CTA */}
-        <section
-          className="section-dark"
-          style={{ padding: "6rem 0" }}
-        >
-          <Reveal>
-
-            <div className="container-wide px-4 sm:px-6 lg:px-0 text-center">
-
-              <span className="section-label justify-center">
-                Ready?
-              </span>
-
-              <h2 className="section-heading mt-3 text-3xl sm:text-4xl">
-                Let&apos;s Create
-                <span> Together</span>
-              </h2>
-
-              <p
-                className="mt-5 max-w-xl mx-auto"
-                style={{
-                  fontSize: ".9rem",
-                }}
-              >
-                Great architecture begins
-                with trust.
-              </p>
-
-              <div className="mt-10">
-
-                <HoverCard>
-
-                  <Link
-                    href="/contact"
-                    className="btn-primary"
-                  >
-                    <span>Start A Project</span>
-                  </Link>
-
-                </HoverCard>
-
-              </div>
-
-            </div>
-
-          </Reveal>
-        </section>
-
       </main>
     </>
   );

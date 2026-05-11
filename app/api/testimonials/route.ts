@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '../../../lib/prisma'
+import { slugify } from '../../../lib/utils'
 
 // GET ALL TESTIMONIALS
 export async function GET() {
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
         featured: Boolean(body.featured),
         published: Boolean(body.published),
         sortOrder: Number(body.sortOrder || 0),
-        slug: body.slug || 's1',
+        slug: body.slug || slugify(body.name) + '-' + Date.now(),
         status: body.status || 'PENDING',
       },
     })

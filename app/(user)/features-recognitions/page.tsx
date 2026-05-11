@@ -50,78 +50,7 @@ const jsonLd = {
     `${siteUrl}/featured-recognitions`,
 };
 
-const publications = [
-  {
-    title: 'Architectural Digest',
-    year: '2025',
-    category: 'Editorial Feature',
-    image: '/images/about-office.png',
-  },
-  {
-    title: 'Dezeen',
-    year: '2024',
-    category: 'Design Feature',
-    image: '/images/about-office.png',
-  },
-  {
-    title: 'Wallpaper*',
-    year: '2024',
-    category: 'Studio Feature',
-    image: '/images/about-office.png',
-  },
-  {
-    title: 'ArchDaily',
-    year: '2023',
-    category: 'Project Feature',
-    image: '/images/about-office.png',
-  },
-  {
-    title: 'Interior Design Magazine',
-    year: '2023',
-    category: 'Editorial',
-    image: '/images/about-office.png',
-  },
-  {
-    title: 'Designboom',
-    year: '2022',
-    category: 'Global Press',
-    image: '/images/about-office.png',
-  },
-];
-
-const recognitions = [
-  {
-    year: '2025',
-    title: 'Global Design Excellence Award',
-    desc:
-      'Recognised for pioneering sustainable luxury architecture.',
-  },
-  {
-    year: '2024',
-    title: 'RIBA International Recognition',
-    desc:
-      'Shortlisted for cultural architecture excellence.',
-  },
-  {
-    year: '2023',
-    title: 'Architectural Review Award',
-    desc:
-      'Celebrated for innovation in residential design.',
-  },
-  {
-    year: '2022',
-    title: 'Dezeen Design Award',
-    desc:
-      'Awarded for outstanding hospitality interiors.',
-  },
-  {
-    year: '2020',
-    title: 'AIA Award of Merit',
-    desc:
-      'Excellence in modern contextual architecture.',
-  },
-];
-
+/* ─── Static fallback stats ─────────────────────────────── */
 const stats = [
   {
     number: '65+',
@@ -141,7 +70,71 @@ const stats = [
   },
 ];
 
-export default function FeaturedRecognitionsPage() {
+/* ─── Types ──────────────────────────────────────────────── */
+interface Feature {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  icon: string | null;
+  image: string | null;
+  category: string | null;
+  featured: boolean;
+  published: boolean;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/* ─── Data Fetching ──────────────────────────────────────── */
+async function getFeatures(): Promise<Feature[]> {
+  try {
+    const baseUrl =
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      'http://localhost:3000';
+
+    const res = await fetch(
+      `${baseUrl}/api/feature`,
+      { next: { revalidate: 60 } },
+    );
+
+    if (!res.ok) return [];
+
+    const json = await res.json();
+
+    return json.success
+      ? (json.data as Feature[]).filter(
+          (f) => f.published,
+        )
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+/* ─── Page ───────────────────────────────────────────────── */
+export default async function FeaturedRecognitionsPage() {
+  const features = await getFeatures();
+
+  /* Split by category — anything with category "press",
+     "publication", or "feature" goes to the press grid;
+     everything else to the recognition timeline.
+     If no category is set, default to timeline.          */
+  const pressKeywords = ['press', 'publication', 'feature', 'media', 'editorial'];
+
+  const publications = features.filter((f) =>
+    pressKeywords.some((kw) =>
+      (f.category ?? '').toLowerCase().includes(kw),
+    ),
+  );
+
+  const recognitions = features.filter(
+    (f) =>
+      !pressKeywords.some((kw) =>
+        (f.category ?? '').toLowerCase().includes(kw),
+      ),
+  );
+
   return (
     <>
       <script
@@ -192,7 +185,7 @@ export default function FeaturedRecognitionsPage() {
             <Reveal delay={0.15}>
               <h2 className="section-heading mt-3">
                 Design That
-                <span>
+                <span className="pl-3">
                   Gets Noticed
                 </span>
               </h2>
@@ -219,199 +212,204 @@ export default function FeaturedRecognitionsPage() {
           </div>
         </section>
 
-        {/* PRESS */}
-        <section
-          className="section-dark"
-          style={{
-            padding:
-              'var(--section-py) 0',
-          }}
-        >
-          <div className="container-wide px-5">
+        {/* PRESS FEATURES */}
+        {publications.length > 0 && (
+          <section
+            className="section-dark"
+            style={{
+              padding:
+                'var(--section-py) 0',
+            }}
+          >
+            <div className="container-wide px-5">
 
-            <Reveal>
-              <div className="text-center mb-10 md:mb-14">
-                <span className="section-label justify-center">
-                  Press Features
-                </span>
-
-                <h2 className="section-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight">
-                  International
-                  <span className="block sm:inline pl-0 sm:pl-3 mt-2 sm:mt-0">
-                    Publications
+              <Reveal>
+                <div className="text-center mb-10 md:mb-14">
+                  <span className="section-label justify-center">
+                    Press Features
                   </span>
-                </h2>
 
-                <span className="gold-divider mx-auto" />
-              </div>
-            </Reveal>
+                  <h2 className="section-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight">
+                    International
+                    <span className="block sm:inline pl-0 sm:pl-3 mt-2 sm:mt-0">
+                      Publications
+                    </span>
+                  </h2>
 
-            <div
-              className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-px"
-            >
-              {publications.map(
-                (item) => (
-                  <article
-                    key={item.title}
-                    style={{
-                      background:
-                        'var(--color-dark3)',
-                      overflow:
-                        'hidden',
-                    }}
-                  >
-                    <div
-                      className="relative"
+                  <span className="gold-divider mx-auto" />
+                </div>
+              </Reveal>
+
+              <div
+                className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-px"
+              >
+                {publications.map(
+                  (item) => (
+                    <article
+                      key={item.id}
                       style={{
-                        aspectRatio:
-                          '4/3',
+                        background:
+                          'var(--color-dark3)',
+                        overflow:
+                          'hidden',
                       }}
                     >
-                      <Image
-                        src={
-                          item.image
-                        }
-                        alt={
-                          item.title
-                        }
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-
-                    <div className="p-5 md:p-6">
-
-                      <p
+                      <div
+                        className="relative"
                         style={{
-                          color:
-                            'var(--color-primary)',
-                          fontSize:
-                            '.7rem',
-                          letterSpacing:
-                            '.15em',
+                          aspectRatio:
+                            '4/3',
                         }}
                       >
-                        {
-                          item.year
-                        }
-                      </p>
+                        <Image
+                          src={
+                            item.image ||
+                            '/images/about-office.png'
+                          }
+                          alt={
+                            item.title
+                          }
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+
+                      <div className="p-5 md:p-6">
+
+                        {item.category && (
+                          <p
+                            style={{
+                              color:
+                                'var(--color-primary)',
+                              fontSize:
+                                '.7rem',
+                              letterSpacing:
+                                '.15em',
+                              textTransform:
+                                'uppercase',
+                            }}
+                          >
+                            {item.category}
+                          </p>
+                        )}
+
+                        <h3
+                          className="mt-3"
+                          style={{
+                            fontFamily:
+                              'var(--font-playfair)',
+                            color:
+                              'white',
+                            fontSize:
+                              '1.1rem',
+                          }}
+                        >
+                          {item.title}
+                        </h3>
+
+                        {item.description && (
+                          <p
+                            className="mt-3 text-sm"
+                          >
+                            {item.description}
+                          </p>
+                        )}
+
+                      </div>
+                    </article>
+                  )
+                )}
+              </div>
+
+            </div>
+          </section>
+        )}
+
+        {/* RECOGNITION TIMELINE */}
+        {recognitions.length > 0 && (
+          <section
+            className="section-dark2"
+            style={{
+              padding:
+                'var(--section-py) 0',
+            }}
+          >
+            <div className="container-wide px-5">
+
+              <Reveal>
+                <div className="text-center mb-10 md:mb-14">
+                  <span className="section-label justify-center">
+                    Milestones
+                  </span>
+
+                  <h2 className="section-heading">
+                    Industry
+                    <span>
+                      Recognition
+                    </span>
+                  </h2>
+
+                  <span className="gold-divider mx-auto" />
+                </div>
+              </Reveal>
+
+              <div className="space-y-4 md:space-y-6 max-w-4xl mx-auto">
+
+                {recognitions.map(
+                  (item) => (
+                    <div
+                      key={item.id}
+                      className="card-surface p-5 md:p-6"
+                    >
+
+                      {item.category && (
+                        <p
+                          style={{
+                            color:
+                              'var(--color-primary)',
+                            fontSize:
+                              '.75rem',
+                            letterSpacing:
+                              '.15em',
+                            textTransform:
+                              'uppercase',
+                          }}
+                        >
+                          {item.category}
+                        </p>
+                      )}
 
                       <h3
-                        className="mt-3"
+                        className="mt-2"
                         style={{
                           fontFamily:
                             'var(--font-playfair)',
-                          color:
-                            'white',
                           fontSize:
                             '1.1rem',
+                          color:
+                            'white',
                         }}
                       >
-                        {
-                          item.title
-                        }
+                        {item.title}
                       </h3>
 
-                      <p
-                        className="mt-3 text-sm"
-                      >
-                        {
-                          item.category
-                        }
-                      </p>
+                      {item.description && (
+                        <p
+                          className="mt-3 text-sm"
+                        >
+                          {item.description}
+                        </p>
+                      )}
 
                     </div>
-                  </article>
-                )
-              )}
-            </div>
+                  )
+                )}
 
-          </div>
-        </section>
-
-        {/* TIMELINE */}
-        <section
-          className="section-dark2"
-          style={{
-            padding:
-              'var(--section-py) 0',
-          }}
-        >
-          <div className="container-wide px-5">
-
-            <Reveal>
-              <div className="text-center mb-10 md:mb-14">
-                <span className="section-label justify-center">
-                  Milestones
-                </span>
-
-                <h2 className="section-heading">
-                  Industry
-                  <span>
-                    Recognition
-                  </span>
-                </h2>
-
-                <span className="gold-divider mx-auto" />
               </div>
-            </Reveal>
-
-            <div className="space-y-4 md:space-y-6 max-w-4xl mx-auto">
-
-              {recognitions.map(
-                (item) => (
-                  <div
-                    key={item.title}
-                    className="card-surface p-5 md:p-6"
-                  >
-
-                    <p
-                      style={{
-                        color:
-                          'var(--color-primary)',
-                        fontSize:
-                          '.75rem',
-                        letterSpacing:
-                          '.15em',
-                      }}
-                    >
-                      {
-                        item.year
-                      }
-                    </p>
-
-                    <h3
-                      className="mt-2"
-                      style={{
-                        fontFamily:
-                          'var(--font-playfair)',
-                        fontSize:
-                          '1.1rem',
-                        color:
-                          'white',
-                      }}
-                    >
-                      {
-                        item.title
-                      }
-                    </h3>
-
-                    <p
-                      className="mt-3 text-sm"
-                    >
-                      {
-                        item.desc
-                      }
-                    </p>
-
-                  </div>
-                )
-              )}
 
             </div>
-
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* STATS */}
         <section
@@ -442,9 +440,7 @@ export default function FeaturedRecognitionsPage() {
                           'var(--color-primary)',
                       }}
                     >
-                      {
-                        item.number
-                      }
+                      {item.number}
                     </h3>
 
                     <p
@@ -456,9 +452,7 @@ export default function FeaturedRecognitionsPage() {
                           'uppercase',
                       }}
                     >
-                      {
-                        item.label
-                      }
+                      {item.label}
                     </p>
 
                   </div>
@@ -469,68 +463,6 @@ export default function FeaturedRecognitionsPage() {
 
           </div>
         </section>
-
-        {/* CTA */}
-        <section
-          className="relative overflow-hidden"
-          style={{
-            padding:
-              '6rem 0',
-          }}
-        >
-
-          <div className="absolute inset-0">
-
-            <img
-              src="/images/about-office.png"
-              alt=""
-              className="w-full h-full object-cover"
-            />
-
-            <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  'rgba(13,13,13,.87)',
-              }}
-            />
-
-          </div>
-
-          <div className="container-wide relative z-10 text-center px-5">
-
-            <Reveal>
-              <span className="section-label justify-center">
-                Build With Us
-              </span>
-            </Reveal>
-
-            <Reveal delay={0.2}>
-              <h2 className="section-heading mt-3">
-                Let’s Create
-                <span>
-                  The Next Recognition
-                </span>
-              </h2>
-            </Reveal>
-
-            <Reveal delay={0.3}>
-              <div className="mt-10">
-
-                <Link
-                  href="/contact"
-                  className="btn-primary"
-                >
-                  Start a Conversation
-                </Link>
-
-              </div>
-            </Reveal>
-
-          </div>
-
-        </section>
-
       </main>
     </>
   );

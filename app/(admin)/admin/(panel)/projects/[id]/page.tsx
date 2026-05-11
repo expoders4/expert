@@ -23,6 +23,9 @@ export default async function EditProjectPage({
       where: {
         id: params.id,
       },
+      include: {
+        gallery: true,
+      },
     })
 
   if (!project) {
@@ -65,12 +68,12 @@ export default async function EditProjectPage({
       project.coverImage ??
       undefined,
 
-    // gallery:
-    //   Array.isArray(
-    //     project.gallery
-    //   )
-    //     ? project.gallery
-    //     : [],
+    gallery:
+      Array.isArray(
+        (project as any).gallery
+      )
+        ? (project as any).gallery
+        : [],
 
     metaTitle:
       project.metaTitle ??

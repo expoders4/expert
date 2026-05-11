@@ -22,6 +22,7 @@ export default async function EditAwardPage({ params }: PageProps) {
     description: award.description ?? undefined,
     location: award.location ?? undefined,
     image: award.image ?? undefined,
+    categoryId: award.categoryId ?? undefined,
   }
   
 

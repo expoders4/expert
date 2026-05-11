@@ -79,7 +79,7 @@ const siteUrl =
   "https://tougharchitects.com";
 
 const siteName =
-  "Architects";
+  "TOUGH Architects";
 
 const siteDescription =
   "Award-winning architectural firm specialising in residential, commercial, and interior design.";

@@ -52,6 +52,11 @@ export const awardSchema = z.object({
     .optional()
     .or(z.literal('')),
 
+  location: z
+    .string()
+    .optional()
+    .or(z.literal('')),
+
   description: z
     .string()
     .max(500, 'Maximum 500 characters')

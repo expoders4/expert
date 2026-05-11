@@ -47,7 +47,7 @@ export default function Header() {
             : 'py-7'
           }`}
       >
-        <div className="mx-auto px-6 lg:px-12 flex items-center justify-between">
+        <div className="mx-auto px-6 lg:px-12 flex items-center justify-between container-wide">
 
           {/* Logo */}
           <Link
@@ -64,10 +64,26 @@ export default function Header() {
             </span>
           </Link>
 
+          {/* Desktop Menu */}
+          <nav className="hidden lg:flex items-center gap-8">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`font-playfair transition-colors ${pathname === link.href
+                    ? 'text-gold'
+                    : 'text-white hover:text-gold'
+                  }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+
           {/* Sidebar Button */}
           <button
             onClick={() => setMenuOpen(true)}
-            className="flex flex-col gap-[5px]"
+            className="lg:hidden flex flex-col gap-[5px]"
             aria-label="Open navigation menu"
           >
             <span className="block w-7 h-px bg-white" />

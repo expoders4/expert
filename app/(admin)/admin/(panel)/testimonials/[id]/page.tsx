@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation"
 import prisma from "../../../../../../lib/prisma"
+import TestimonialForm from "../../../../../../components/admin/component/testimonialForm"
 
 export default async function EditTestimonialPage({
   params,
@@ -12,7 +13,13 @@ export default async function EditTestimonialPage({
 
   if (!testimonial) return notFound()
 
-  return (
-    <></>
-  )
+  const serialized = {
+    ...testimonial,
+    designation: testimonial.role ?? undefined,
+    role: testimonial.role ?? undefined,
+    company: testimonial.company ?? undefined,
+    avatar: testimonial.avatar ?? undefined,
+  }
+
+  return <TestimonialForm mode="edit" testimonial={serialized as any} />
 }

@@ -98,6 +98,10 @@ export default function AwardForm({ award, mode }: Props) {
             <label className="admin-label">Image URL</label>
             <input {...register('image')} className="admin-input" placeholder="/uploads/award.jpg" />
           </div>
+          <div>
+            <label className="admin-label">Location</label>
+            <input {...register('location')} className="admin-input" placeholder="New Delhi, India" />
+          </div>
         </div>
         <div>
           <label className="admin-label">Description</label>

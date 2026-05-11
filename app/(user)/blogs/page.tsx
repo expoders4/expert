@@ -4,6 +4,9 @@ import Link from 'next/link';
 
 import PageHero from '../../../components/user/pageHero';
 import { Reveal } from '../../../components/animations';
+import prisma from '../../../lib/prisma';
+
+export const dynamic = 'force-dynamic';
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ||
@@ -41,56 +44,20 @@ const jsonLd = {
   url: `${siteUrl}/blog`,
 };
 
-const featured = {
-  title: 'Designing Spaces That Outlive Trends',
-  slug: 'designing-spaces',
-  image: '/images/about-office.png',
-  category: 'Featured',
-  excerpt:
-    'Architecture should age with grace, not fashion. Discover how timeless design is created.',
-};
+async function getBlogs() {
+  return prisma.blog.findMany({
+    where: { published: true },
+    orderBy: [{ featured: 'desc' }, { sortOrder: 'asc' }, { createdAt: 'desc' }],
+    include: { author: true },
+  });
+}
 
-const posts = [
-  {
-    title: 'The Future of Sustainable Luxury',
-    slug: 'future-sustainable-luxury',
-    category: 'Sustainability',
-    image: '/images/about-office.png',
-  },
-  {
-    title: 'Material Honesty in Modern Architecture',
-    slug: 'material-honesty',
-    category: 'Materials',
-    image: '/images/about-office.png',
-  },
-  {
-    title: 'How Natural Light Shapes Emotion',
-    slug: 'natural-light',
-    category: 'Interior',
-    image: '/images/about-office.png',
-  },
-  {
-    title: 'Building for 100 Years',
-    slug: 'building-for-100-years',
-    category: 'Process',
-    image: '/images/about-office.png',
-  },
-  {
-    title: 'Residential Spaces That Breathe',
-    slug: 'residential-spaces',
-    category: 'Residential',
-    image: '/images/about-office.png',
-  },
-  {
-    title: 'Architecture Beyond Form',
-    slug: 'beyond-form',
-    category: 'Philosophy',
-    image: '/images/about-office.png',
-  },
-];
+export default async function BlogPage() {
+  const blogs = await getBlogs();
+ 
+  const featured = blogs.find((b:any) => b.featured) ?? blogs[0] ?? null;
+  const posts = blogs.filter((b:any) => b.id !== featured?.id);
 
-
-export default function BlogPage() {
   return (
     <>
       <script
@@ -123,86 +90,88 @@ export default function BlogPage() {
 
 
         {/* FEATURED */}
-        <section
-          className="section-dark2"
-          style={{
-            padding: 'var(--section-py) 0',
-          }}
-        >
-          <div className="container-wide">
-
-            <Reveal>
-              <span className="section-label">
-                Featured Story
-              </span>
-            </Reveal>
-
-            <div className="grid lg:grid-cols-2 gap-10 mt-8 items-center">
+        {featured && (
+          <section
+            className="section-dark2"
+            style={{
+              padding: 'var(--section-py) 0',
+            }}
+          >
+            <div className="container-wide">
 
               <Reveal>
-                <div
-                  className="relative overflow-hidden"
-                  style={{
-                    aspectRatio: '4/3',
-                  }}
-                >
-                  <Image
-                    src={featured.image}
-                    alt={featured.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
+                <span className="section-label">
+                  Featured Story
+                </span>
               </Reveal>
 
+              <div className="grid lg:grid-cols-2 gap-10 mt-8 items-center">
 
-              <Reveal delay={0.2}>
-                <div>
-
-                  <p
+                <Reveal>
+                  <div
+                    className="relative overflow-hidden"
                     style={{
-                      color:
-                        'var(--color-primary)',
-                      fontSize:
-                        '.7rem',
-                      letterSpacing:
-                        '.15em',
+                      aspectRatio: '4/3',
                     }}
                   >
-                    {featured.category}
-                  </p>
-
-                  <h2
-                    className="section-heading mt-4"
-                  >
-                    {featured.title}
-                  </h2>
-
-                  <p
-                    className="mt-5"
-                    style={{
-                      fontSize:
-                        '.9rem',
-                    }}
-                  >
-                    {featured.excerpt}
-                  </p>
-
-                  <div className="mt-8">
-                    <Link
-                      href={`/blog/${featured.slug}`}
-                      className="btn-primary"
-                    >
-                      <span>Read Article</span>
-                    </Link>
+                    <Image
+                      src={featured.coverImage ?? '/images/about-office.png'}
+                      alt={featured.title}
+                      fill
+                      className="object-cover"
+                    />
                   </div>
+                </Reveal>
 
-                </div>
-              </Reveal>
 
+                <Reveal delay={0.2}>
+                  <div>
+
+                    <p
+                      style={{
+                        color:
+                          'var(--color-primary)',
+                        fontSize:
+                          '.7rem',
+                        letterSpacing:
+                          '.15em',
+                      }}
+                    >
+                      {featured.category ?? 'Featured'}
+                    </p>
+
+                    <h2
+                      className="section-heading mt-4"
+                    >
+                      {featured.title}
+                    </h2>
+
+                    <p
+                      className="mt-5"
+                      style={{
+                        fontSize:
+                          '.9rem',
+                      }}
+                    >
+                      {featured.excerpt}
+                    </p>
+
+                    <div className="mt-8">
+                      <Link
+                        href={`/blogs/${featured.slug}`}
+                        className="btn-primary"
+                      >
+                        <span>Read Article</span>
+                      </Link>
+                    </div>
+
+                  </div>
+                </Reveal>
+
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* ARTICLES */}
         <section
@@ -235,7 +204,7 @@ export default function BlogPage() {
               className="grid md:grid-cols-2 xl:grid-cols-3 gap-px"
 
             >
-              {posts.map((post) => (
+              {posts.map((post:any) => (
 
                 <article
                   key={post.slug}
@@ -255,7 +224,7 @@ export default function BlogPage() {
                     }}
                   >
                     <Image
-                      src={post.image}
+                      src={post.coverImage ?? '/images/about-office.png'}
                       alt={post.title}
                       fill
                       className="object-cover"
@@ -360,7 +329,7 @@ export default function BlogPage() {
                 href="/contact"
                 className="btn-primary inline-flex items-center gap-3 hover:!text-background"
               >
-                
+
                 <span> Start a Conversation</span>
               </Link>
             </div>

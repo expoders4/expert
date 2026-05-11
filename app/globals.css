@@ -39,7 +39,7 @@
   --transition-expo:   0.9s cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Spacing */
-  --section-py: 7rem;
+  --section-py: 3rem;
   --container-px: 1.5rem;
 
   /* Nav height */
@@ -761,6 +761,150 @@ input, textarea, select {
   body { background: white; color: black; }
 }
 
+/* ─── Missing keyframe animations ───────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes line-grow {
+  from { width: 0; }
+  to   { width: 60px; }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.ticker-track {
+  display: flex;
+  animation: ticker-scroll 45s linear infinite;
+  width: max-content;
+  white-space: nowrap;
+}
+
+/* ─── Process step connector ─────────────────────────────── */
+.process-connector {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, var(--color-primary), transparent);
+  opacity: 0.3;
+}
+
+/* ─── CTA section ────────────────────────────────────────── */
+.cta-section-bg {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+
+/* =========================================================
+   LANDING PAGE ANIMATIONS
+========================================================= */
+
+/* Hero image — push-zoom enter on slide change */
+@keyframes hero-img-enter {
+  from {
+    transform: scale(1.14);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+.hero-img-enter {
+  animation: hero-img-enter 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Hero heading — individual word rise + blur */
+@keyframes word-rise {
+  from {
+    opacity: 0;
+    transform: translateY(48px);
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.animate-word-rise {
+  opacity: 0;
+  animation: word-rise 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Hero label / sub / CTA — clip reveal from bottom */
+@keyframes clip-up {
+  from {
+    clip-path: inset(100% 0 0 0);
+    opacity: 0;
+  }
+  to {
+    clip-path: inset(0% 0 0 0);
+    opacity: 1;
+  }
+}
+
+.animate-clip-up {
+  animation: clip-up 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Section reveal with blur — richer than plain .reveal */
+.reveal-blur {
+  opacity: 0;
+  filter: blur(6px);
+  transform: translateY(24px);
+  transition:
+    opacity   1s cubic-bezier(0.16, 1, 0.3, 1),
+    filter    1s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-blur.visible {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+}
+
+/* Reveal scale — pop up from small */
+@keyframes pop-in {
+  0%   { opacity: 0; transform: scale(0.88) translateY(20px); }
+  70%  { transform: scale(1.02) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Float — for decorative stat badges */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float-y 4s ease-in-out infinite;
+}
+
+/* Gold line draw */
+@keyframes line-draw-x {
+  from { transform: scaleX(0); transform-origin: left center; }
+  to   { transform: scaleX(1); transform-origin: left center; }
+}
+
+/* Stagger helper via CSS custom property */
+.stagger-1 { transition-delay: 0.08s !important; }
+.stagger-2 { transition-delay: 0.16s !important; }
+.stagger-3 { transition-delay: 0.24s !important; }
+.stagger-4 { transition-delay: 0.32s !important; }
+.stagger-5 { transition-delay: 0.40s !important; }
+.stagger-6 { transition-delay: 0.48s !important; }
+
 .contact-input{
   width:100%;
   background:transparent;
@@ -861,4 +1005,21 @@ input, textarea, select {
 
 .text-brand-600 {
   color: #9333ea;
+}
+
+
+/* Portfolio Section */
+.portfolio-card:hover .portfolio-img {
+  transform: scale(1.06);
+}
+
+.portfolio-card:hover .card-cta {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+@media (max-width: 767px) {
+  .portfolio-card.span-6-mobile {
+    grid-column: span 12 !important;
+  }
 }

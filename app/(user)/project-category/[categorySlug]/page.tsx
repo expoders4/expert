@@ -1,15 +1,36 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import PageHero from "../../../../components/user/pageHero";
 import { Reveal, Stagger } from "../../../../components/animations";
 import Image from "next/image";
 import prisma from "../../../../lib/prisma";
+import { cache } from "react";
 
-async function getCategory(slug: string) {
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tougharchitects.com";
+
+const getCategory = cache(async (slug: string) => {
   return prisma.projectSubCategory.findMany({
     where: { category: { slug } },
     include: { category: true },
     orderBy: { sortOrder: "asc" },
   });
+});
+
+export async function generateMetadata({ params }: any): Promise<Metadata> {
+  const items = await getCategory(params.categorySlug);
+  const categoryName = items[0]?.category?.name ?? params.categorySlug;
+
+  return {
+    title: `${categoryName} Architecture Projects — TOUGH Architects`,
+    description: `Explore TOUGH Architects' ${categoryName} projects — thoughtfully designed spaces across India.`,
+    alternates: { canonical: `${siteUrl}/project-category/${params.categorySlug}` },
+    openGraph: {
+      title: `${categoryName} — TOUGH Architects`,
+      description: `${categoryName} architecture and design projects by TOUGH Architects.`,
+      url: `${siteUrl}/project-category/${params.categorySlug}`,
+      type: "website",
+    },
+  };
 }
 
 export default async function CategoryPage({
