@@ -222,7 +222,7 @@ export default async function TestimonialsPage() {
                             1,
                         }}
                       >
-                        "
+                        
                       </p>
 
 
@@ -379,7 +379,7 @@ export default async function TestimonialsPage() {
 
             <Reveal delay={0.2}>
               <h2 className="section-heading mt-3">
-                Let's Create
+                Let&quot;s Create
                 <span>
                   Something Extraordinary
                 </span>

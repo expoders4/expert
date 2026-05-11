@@ -6,6 +6,7 @@ import StatsSection from '../../components/user/StatsSection';
 import PortfolioSection from '../../components/user/PortfolioSection';
 import TestimonialsSection from '../../components/user/TestimonialsSection';
 import prisma from '../../lib/prisma';
+import { getFeaturedProjects } from '../../lib/queries/projects';
 
 /* ─── Page-level SEO override ────────────────────────────── */
 export const metadata: Metadata = {
@@ -20,19 +21,6 @@ export const metadata: Metadata = {
   },
 };
 
-export const getFeaturedProjects = async () => {
-  return await prisma.project.findMany({
-    where: {
-      published: true,
-    },
-    include: {
-      subCategory: true,
-    },
-    orderBy: {
-      sortOrder: 'asc',
-    },
-  });
-};
 
 export default async function HomePage() {
   const projects = await getFeaturedProjects();
