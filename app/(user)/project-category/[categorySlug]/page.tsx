@@ -9,51 +9,98 @@ import { cache } from "react";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tougharchitects.com";
 
 const getCategory = cache(async (slug: string) => {
-  return prisma.projectSubCategory.findMany({
-    where: { category: { slug } },
-    include: { category: true },
-    orderBy: { sortOrder: "asc" },
-  });
+    const subCategories = await prisma.projectSubCategory.findMany({
+        where: {
+            category: {
+                slug,
+            },
+        },
+        include: {
+            category: true,
+        },
+        orderBy: {
+            sortOrder: 'asc',
+        },
+    });
+
+    // If subcategories exist
+    if (subCategories.length > 0) {
+        return {
+            type: 'subcategory',
+            data: subCategories,
+        };
+    }
+
+    // Otherwise return category
+    const category = await prisma.projectCategory.findUnique({
+        where: {
+            slug,
+        },
+    });
+
+    return {
+        type: 'category' as const,
+        data: category ? [category] : [],
+    };
 });
 
 export async function generateMetadata({ params }: any): Promise<Metadata> {
-  const items = await getCategory(params.categorySlug);
-  const categoryName = items[0]?.category?.name ?? params.categorySlug;
+    // const items = await getCategory(params.categorySlug);
+    // const categoryName = items[0]?.category?.name ?? params.categorySlug;
+    const result = await getCategory(
+        params.categorySlug
+    );
 
-  return {
-    title: `${categoryName} Architecture Projects — TOUGH Architects`,
-    description: `Explore TOUGH Architects' ${categoryName} projects — thoughtfully designed spaces across India.`,
-    alternates: { canonical: `${siteUrl}/project-category/${params.categorySlug}` },
-    openGraph: {
-      title: `${categoryName} — TOUGH Architects`,
-      description: `${categoryName} architecture and design projects by TOUGH Architects.`,
-      url: `${siteUrl}/project-category/${params.categorySlug}`,
-      type: "website",
-    },
-  };
+    const categoryName =
+        result.type === 'subcategory'
+            ? result.data[0]?.category?.name
+            : result.data[0]?.name;
+
+    return {
+        title: `${categoryName} Architecture Projects — TOUGH Architects`,
+        description: `Explore TOUGH Architects' ${categoryName} projects — thoughtfully designed spaces across India.`,
+        alternates: { canonical: `${siteUrl}/project-category/${params.categorySlug}` },
+        openGraph: {
+            title: `${categoryName} — TOUGH Architects`,
+            description: `${categoryName} architecture and design projects by TOUGH Architects.`,
+            url: `${siteUrl}/project-category/${params.categorySlug}`,
+            type: "website",
+        },
+    };
 }
 
 export default async function CategoryPage({
     params,
 }: any) {
-    const category =
-        await getCategory(
-            params.categorySlug
-        );
+    const categorySlugs = await getCategory(
+        params.categorySlug
+    );
+
+    const categoryDetails =
+        categorySlugs.type === 'subcategory'
+            ? categorySlugs.data[0]?.category
+            : categorySlugs.data[0];
+
+    const subCategories =
+        categorySlugs.type === 'subcategory'
+            ? categorySlugs.data
+            : [];
+
+    console.log(categoryDetails);
 
     return (
         <>
             <main>
                 <PageHero
                     label="Our Work"
-                    title={params.categorySlug}
+                    title={categoryDetails?.name || ''}
                     titleAccent="Sub Categories"
-                    subtitle="Explore our work across sectors, scales, and continents."
-                    image="/images/projects-hero.jpg"
-                    imageAlt={`${params.categorySlug} recognitions`}
+                    subtitle={categoryDetails?.description || ''}
+                    image={categoryDetails?.image || ''}
+                    imageAlt={`${categoryDetails?.slug} recognitions`}
                     breadcrumbs={[
                         { label: "Home", href: "/" },
-                        { label: params.categorySlug },
+                        { label: categoryDetails?.name || '' },
                     ]}
 
                 />
@@ -65,7 +112,7 @@ export default async function CategoryPage({
                     <div className="container-wide">
                         <Stagger className="grid md:grid-cols-2 gap-8">
 
-                            {category.map((project: any) => (
+                            {subCategories.map((project: any) => (
 
                                 <Reveal key={project.slug}>
                                     <Link

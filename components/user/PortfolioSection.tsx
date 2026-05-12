@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 const categories = ['All', 'Residential', 'Commercial', 'Interior', 'Cultural'];
@@ -125,95 +126,140 @@ export default function PortfolioSection({
         </div>
 
         {/* Grid */}
-        <div
+        {/* <div
           className="grid gap-px"
           style={{
             gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 380px), 1fr))',
             background: 'var(--color-dark4)',
           }}
+        > */}
+        <div className="grid gap-px grid-cols-1 md:grid-cols-2"
+          style={{
+            background: 'var(--color-dark4)',
+          }}
         >
-          {filtered.map((project, i) => (
-            <article
-              key={`${active}-${project.id}`}
-              className="portfolio-item reveal-scale group"
-              style={{
-                aspectRatio: project.featured ? '16/10' : '4/3',
-                transitionDelay: `${i * 0.06}s`,
-                gridColumn: project.featured && i === 0 ? 'span 2' : 'span 1',
-                cursor: 'pointer',
-              }}
-              aria-label={`${project.title} — ${project.subCategory?.name || ''}`}
-            >
-              <div
-                className="relative w-full h-full bg-cover bg-center"
-                style={{
-                  backgroundImage: `url(${project.thumbnail || ''})`,
-                }}
-              />
+          {filtered.map((item, i) => {
+            const spanClass =
+              i % 4 === 0
+                ? 'md:row-span-2'
+                : i % 4 === 1
+                  ? 'md:row-span-1'
+                  : i % 4 === 2
+                    ? 'md:row-span-1'
+                    : 'md:row-span-2';
 
-              <div className="portfolio-overlay" />
+            const heightClass =
+              i % 4 === 0
+                ? 'h-[600px]'
+                : i % 4 === 1
+                  ? 'h-[280px]'
+                  : i % 4 === 2
+                    ? 'h-[320px]'
+                    : 'h-[200px]';
 
-              <div className="portfolio-info">
-                <p
-                  style={{
-                    fontFamily: 'var(--font-raleway)',
-                    fontSize: '0.62rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.25em',
-                    textTransform: 'uppercase',
-                    color: 'var(--color-primary)',
-                    marginBottom: '0.4rem',
-                  }}
-                >
-                  {project.subCategory?.name} · {project.year}
-                </p>
+            return (
+              <Link
+                key={item.id}
+                href={`/project/${item.slug}`}
+                className={`group block ${spanClass}`}
+              >
+                <div className={`relative ${heightClass} overflow-hidden`}>
 
-                <h3
-                  style={{
-                    fontFamily: 'var(--font-playfair)',
-                    fontSize: '1.25rem',
-                    fontWeight: 700,
-                    color: 'var(--color-white)',
-                    marginBottom: '0.3rem',
-                  }}
-                >
-                  {project.title}
-                </h3>
-
-                <p
-                  style={{
-                    fontSize: '0.75rem',
-                    color: 'rgba(245,245,240,0.6)',
-                    fontWeight: 300,
-                  }}
-                >
-                  {project.location}
-                </p>
-
-                <div className="flex items-center gap-2 mt-3">
-                  <span
+                  {/* Background image */}
+                  <div
+                    className="absolute inset-0 bg-cover bg-center transition-all duration-700 scale-100 group-hover:scale-110"
                     style={{
-                      width: '24px',
-                      height: '1px',
-                      background: 'var(--color-primary)',
+                      backgroundImage: `url(${item.thumbnail})`,
                     }}
                   />
 
-                  <span
-                    style={{
-                      fontSize: '0.65rem',
-                      fontWeight: 700,
-                      letterSpacing: '0.15em',
-                      textTransform: 'uppercase',
-                      color: 'var(--color-primary)',
-                    }}
-                  >
-                    View Project
-                  </span>
+                  {/* Main luxury overlay */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-700 bg-gradient-to-t from-black via-black/40 to-transparent backdrop-blur-[2px]" />
+
+                  {/* Diagonal sweep */}
+                  <div className="absolute top-0 -left-[120%] w-[60%] h-full bg-white/10 skew-x-[-25deg] group-hover:left-[160%] transition-all duration-1000"
+                  />
+
+                  {/* Gold border animation */}
+                  <div className="absolute inset-6 border border-transparent group-hover:border-[var(--color-primary)] transition-all duration-700" />
+
+                  {/* Content */}
+                  <div className="absolute inset-0 z-20 flex items-end p-10">
+                    <div className="translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700">
+                      {/* Meta */}
+                      <p
+                        style={{
+                          fontFamily:
+                            "var(--font-raleway)",
+                          fontSize: ".65rem",
+                          fontWeight: 700,
+                          letterSpacing: ".25em",
+                          textTransform: "uppercase",
+                          color:
+                            "var(--color-primary)",
+                          marginBottom: ".7rem",
+                        }}
+                      >
+                        · {item.year}
+                      </p>
+
+                      {/* Title */}
+                      <h3
+                        style={{
+                          fontFamily:
+                            "var(--font-playfair)",
+                          fontSize: "1.8rem",
+                          fontWeight: 700,
+                          color:
+                            "var(--color-white)",
+                          marginBottom: ".5rem",
+                        }}
+                      >
+                        {item.title}
+                      </h3>
+
+                      {/* Location */}
+                      <p
+                        style={{
+                          fontSize: ".85rem",
+                          color:
+                            "rgba(255,255,255,.75)",
+                        }}
+                      >
+                        {item.location}
+                      </p>
+
+                      {/* CTA */}
+                      <div className="flex items-center gap-3 mt-5">
+
+                        <span className="h-[1px] w-0 group-hover:w-10 transition-all duration-500 delay-300"
+                          style={{
+                            background:
+                              "var(--color-primary)",
+                          }}
+                        />
+
+                        <span
+                          style={{
+                            fontSize: ".7rem",
+                            fontWeight: 700,
+                            letterSpacing:
+                              ".15em",
+                            textTransform:
+                              "uppercase",
+                            color:
+                              "var(--color-primary)",
+                          }}
+                        >
+                          View Project
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
+              </Link>
+            );
+          })}
         </div>
 
         {/* CTA */}

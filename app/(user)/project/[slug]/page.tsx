@@ -133,11 +133,11 @@ export default async function ProjectPage({
                             {/* Background image */}
                             <div
                               className="
-              absolute inset-0
-              bg-cover bg-center
-              transition-all duration-700
-              scale-100 group-hover:scale-110
-            "
+                                  absolute inset-0
+                                  bg-cover bg-center
+                                  transition-all duration-700
+                                  scale-100 group-hover:scale-110
+                                "
                               style={{
                                 backgroundImage: `url(${project.image})`,
                               }}
@@ -146,13 +146,13 @@ export default async function ProjectPage({
                             {/* Main luxury overlay */}
                             <div
                               className="
-              absolute inset-0
-              opacity-0 group-hover:opacity-100
-              transition-all duration-700
-              bg-gradient-to-t
-              from-black via-black/40 to-transparent
-              backdrop-blur-[2px]
-            "
+                                absolute inset-0
+                                opacity-0 group-hover:opacity-100
+                                transition-all duration-700
+                                bg-gradient-to-t
+                                from-black via-black/40 to-transparent
+                                backdrop-blur-[2px]
+                              "
                             />
 
                             {/* Diagonal sweep */}
