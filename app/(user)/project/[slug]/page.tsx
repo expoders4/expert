@@ -121,9 +121,8 @@ export default async function ProjectPage({
                               : 'h-[600px]';
 
                       return (
-                        <Link
+                        <div
                           key={project.id}
-                          href={`/project/${project.slug}`}
                           className={`group block ${spanClass}`}
                         >
                           <div
@@ -190,7 +189,7 @@ export default async function ProjectPage({
                             </div>
 
                           </div>
-                        </Link>
+                        </div>
                       );
                     })}
                   </div>
