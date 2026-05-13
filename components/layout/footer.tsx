@@ -84,8 +84,8 @@ export default function Footer() {
             <div>
               <h4 className="text-white text-xs font-semibold tracking-widest uppercase mb-5">Contact</h4>
               <ul className="space-y-4">
-                <li className="flex gap-3"><MapPin className="w-4 h-4 text-primary-400 mt-0.5 shrink-0" /><span className="text-sm text-stone-400">123 Architect&apos;s Lane, Ring Road, Surat, Gujarat 395007</span></li>
-                <li className="flex gap-3"><Phone className="w-4 h-4 text-primary-400 shrink-0" /><a href="tel:+919876543210" className="text-sm text-stone-400 hover:text-white transition-colors">+91 98765 43210</a></li>
+                <li className="flex gap-3"><MapPin className="w-4 h-4 text-primary-400 mt-0.5 shrink-0" /><span className="text-sm text-stone-400">608 ASK CONSULTANT, SHALIN CENTRUM, NEAR CROMA SHOW ROOM, SECTOR 11, GANDHINAGAR, Gujarat 382010</span></li>
+                <li className="flex gap-3"><Phone className="w-4 h-4 text-primary-400 shrink-0" /><a href="tel:+919876543210" className="text-sm text-stone-400 hover:text-white transition-colors">+91 814-0604000</a></li>
                 <li className="flex gap-3"><Mail className="w-4 h-4 text-primary-400 shrink-0" /><a href="mailto:info@archstudio.com" className="text-sm text-stone-400 hover:text-white transition-colors">info@archstudio.com</a></li>
               </ul>
             </div>

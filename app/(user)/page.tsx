@@ -39,7 +39,7 @@ const getTestimonial = cache(async () => {
 export default async function HomePage() {
   const projects = await getFeaturedProjects();
   const testimonial = await getTestimonial();
-
+  
   return (
     <>
       <HeroSection />

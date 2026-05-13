@@ -13,6 +13,7 @@ type ProjectType = {
   year?: number | null;
   thumbnail?: string | null;
   image?: string | null;
+coverImage?: string | null;
   featured?: boolean;
   subCategory?: {
     id: string;
@@ -170,7 +171,7 @@ export default function PortfolioSection({
                   <div
                     className="absolute inset-0 bg-cover bg-center transition-all duration-700 scale-100 group-hover:scale-110"
                     style={{
-                      backgroundImage: `url(${item.image})`,
+                      backgroundImage: `url(${item.coverImage})`,
                     }}
                   />
 
