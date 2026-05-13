@@ -22,23 +22,23 @@ model blog {
   title           String
   slug            String     @unique
   excerpt         String?
-  content         String
-  thumbnail       String?
+  content         String     @db.Text
   coverImage      String?
-  category        String?
-  tags            Json?
-  metaTitle       String?
-  metaDescription String?
-  keywords        String?
-  featured        Boolean    @default(false)
   published       Boolean    @default(false)
-  status          blogStatus @default(DRAFT)
-  publishedAt     DateTime?
-  views           Int        @default(0)
-  sortOrder       Int        @default(0)
   authorId        String
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
+  category        String?
+  featured        Boolean    @default(false)
+  keywords        String?
+  metaDescription String?
+  metaTitle       String?
+  publishedAt     DateTime?
+  sortOrder       Int        @default(0)
+  status          blogStatus @default(DRAFT)
+  tags            Json?
+  thumbnail       String?
+  views           Int        @default(0)
   author          admin      @relation(fields: [authorId], references: [id])
 
   @@index([slug])
@@ -52,11 +52,11 @@ model ProjectCategory {
   slug          String               @unique
   description   String?
   sortOrder     Int                  @default(0)
-  image         String?
   createdAt     DateTime             @default(now())
   updatedAt     DateTime             @updatedAt
-  subCategories ProjectSubCategory[]
+  image         String?
   awards        award[]
+  subCategories ProjectSubCategory[]
 
   @@map("project_categories")
 }
@@ -67,10 +67,10 @@ model ProjectSubCategory {
   name        String
   slug        String
   description String?
-  image       String?
   sortOrder   Int             @default(0)
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
+  image       String?
   category    ProjectCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   projects    Project[]
 
@@ -80,7 +80,6 @@ model ProjectSubCategory {
 
 model Project {
   id               String             @id @default(uuid())
-  subCategoryId    String
   title            String
   slug             String             @unique
   shortDescription String?
@@ -91,15 +90,16 @@ model Project {
   area             String?
   thumbnail        String?
   coverImage       String?
-  status           ProjectStatus?
-  featured         Boolean            @default(false)
-  published        Boolean            @default(true)
   metaTitle        String?
   metaDescription  String?
   keywords         String?
+  featured         Boolean            @default(false)
+  published        Boolean            @default(true)
   sortOrder        Int                @default(0)
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
+  subCategoryId    String
+  status           ProjectStatus?
   gallery          ProjectGallery[]
   subCategory      ProjectSubCategory @relation(fields: [subCategoryId], references: [id], onDelete: Cascade)
 
@@ -121,21 +121,21 @@ model ProjectGallery {
 }
 
 model award {
-  id           String   @id @default(uuid())
+  id           String           @id @default(uuid())
   title        String
-  slug         String   @unique
-  categoryId   String?
-  category     ProjectCategory? @relation(fields: [categoryId], references: [id])
+  slug         String           @unique
   organization String?
   description  String?
   year         Int?
   location     String?
   image        String?
-  featured     Boolean  @default(false)
-  published    Boolean  @default(false)
-  sortOrder    Int      @default(0)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  featured     Boolean          @default(false)
+  published    Boolean          @default(false)
+  sortOrder    Int              @default(0)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  categoryId   String?
+  category     ProjectCategory? @relation(fields: [categoryId], references: [id])
 
   @@index([slug])
   @@index([published])
@@ -177,16 +177,16 @@ model testimonial {
   name      String
   role      String?
   company   String?
-  avatar    String?
-  content   String            @default("")
   rating    Int               @default(5)
-  status    testimonialStatus @default(PENDING)
+  avatar    String?
   featured  Boolean           @default(false)
   published Boolean           @default(false)
   sortOrder Int               @default(0)
-  slug      String            @unique
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
+  slug      String            @unique
+  status    testimonialStatus @default(PENDING)
+  content   String            @default("")
 
   @@index([published])
   @@index([featured])

@@ -134,7 +134,7 @@ export default function ContactForm() {
         >
           <input
             {...register('name')}
-            placeholder="Rajesh Patel"
+            placeholder="Enter your full name"
             className="contact-input"
           />
         </Field>
@@ -145,7 +145,7 @@ export default function ContactForm() {
         >
           <input
             {...register('email')}
-            placeholder="rajesh@example.com"
+            placeholder="abc@example.com"
             className="contact-input"
           />
         </Field>
@@ -161,7 +161,7 @@ export default function ContactForm() {
       >
         <input
           {...register('phone')}
-          placeholder="+91 98765 43210"
+          placeholder="+91 00000 00000"
           className="contact-input"
         />
       </Field>

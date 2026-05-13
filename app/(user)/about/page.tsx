@@ -5,9 +5,10 @@ import PageHero from '../../../components/user/pageHero';
 import StatsSection from '../../../components/user/StatsSection';
 import TestimonialsSection from '../../../components/user/TestimonialsSection';
 import { HoverCard, ParallaxImage, Reveal, Stagger } from '../../../components/animations';
+import prisma from '../../../lib/prisma';
+import { cache } from 'react';
 
 /* ─── SEO Metadata ───────────────────────────────────────── */
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tougharchitects.com';
 
 export const metadata: Metadata = {
   title: 'About Us — Our Story, Team & Vision',
@@ -25,17 +26,17 @@ export const metadata: Metadata = {
     'architecture firm New York',
   ],
   alternates: {
-    canonical: `${siteUrl}/about`,
+    canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/about`,
   },
   openGraph: {
     title: 'About TOUGH Architects — Our Story, Team & Vision',
     description:
       'Founded in 1984, TOUGH Architects is a globally recognised practice of 85 architects, designers and engineers. Discover four decades of architectural excellence.',
-    url: `${siteUrl}/about`,
+    url: `${process.env.NEXT_PUBLIC_SITE_URL}/about`,
     type: 'website',
     images: [
       {
-        url: `${siteUrl}/og-about.jpg`,
+        url: `${process.env.NEXT_PUBLIC_SITE_URL}/og-about.jpg`,
         width: 1200,
         height: 630,
         alt: 'TOUGH Architects team and studio',
@@ -46,7 +47,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'About TOUGH Architects — Our Story, Team & Vision',
     description: 'Founded in 1984, TOUGH Architects has grown into a globally recognised architectural practice with a four-decade legacy of design excellence.',
-    images: [`${siteUrl}/og-about.jpg`],
+    images: [`${process.env.NEXT_PUBLIC_SITE_URL}/og-about.jpg`],
   },
 };
 
@@ -54,15 +55,15 @@ export const metadata: Metadata = {
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'AboutPage',
-  '@id': `${siteUrl}/about`,
+  '@id': `${process.env.NEXT_PUBLIC_SITE_URL}/about`,
   name: 'About TOUGH Architects',
-  url: `${siteUrl}/about`,
+  url: `${process.env.NEXT_PUBLIC_SITE_URL}/about`,
   description: 'The story, team, and philosophy of TOUGH Architects — founded 1984.',
   breadcrumb: {
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl },
-      { '@type': 'ListItem', position: 2, name: 'About Us', item: `${siteUrl}/about` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: process.env.NEXT_PUBLIC_SITE_URL },
+      { '@type': 'ListItem', position: 2, name: 'About Us', item: `${process.env.NEXT_PUBLIC_SITE_URL}/about` },
     ],
   },
   mainEntity: {
@@ -176,7 +177,38 @@ const milestones = [
 /* ─── Partners / Clients ─────────────────────────────────── */
 const partners = ['Heatherwick Studio', 'Arup Engineering', 'Vitra', 'Knoll', 'Cassina', 'Fritz Hansen', 'Interface', 'Bolon'];
 
-export default function AboutPage() {
+const getAboutData = cache(async () => {
+  const features = await prisma.feature.findMany({
+    where: {
+      published: true,
+    },
+    orderBy: [
+      { featured: 'desc' },
+      { sortOrder: 'asc' },
+      { createdAt: 'desc' },
+    ],
+  });
+
+  const testimonials = await prisma.testimonial.findMany({
+    where: {
+      published: true,
+      status: 'APPROVED',
+    },
+    orderBy: [
+      { featured: 'desc' },
+      { sortOrder: 'asc' },
+      { createdAt: 'desc' },
+    ],
+  });
+
+  return {
+    features,
+    testimonials,
+  };
+});
+
+export default async function AboutPage() {
+const { features, testimonials } = await getAboutData();
   return (
     <>
       {/* JSON-LD */}
@@ -229,7 +261,7 @@ export default function AboutPage() {
                     with their most important spaces.
                   </p>
                   <div className="mt-10">
-                    <Link href="/portfolio" className="btn-primary inline-flex items-center gap-3">
+                    <Link href="/projects" className="btn-primary inline-flex items-center gap-3">
                       <span>View Our Portfolio</span>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M5 12h14M12 5l7 7-7 7" />
@@ -550,51 +582,14 @@ export default function AboutPage() {
         </section>
 
         {/* ── TESTIMONIALS ──────────────────────────────────── */}
-        <TestimonialsSection />
-
-        {/* ── CTA STRIP ─────────────────────────────────────── */}
-        <section
-          className="relative overflow-hidden"
-          style={{ padding: '6rem 0' }}
-          aria-label="Call to action"
-        >
-          <div className="absolute inset-0">
-              <img src="/images/about-office.png" alt="" aria-hidden="true" className="w-full h-full object-cover" />
-            <div className="absolute inset-0" style={{ background: 'rgba(13,13,13,0.87)' }} />
-          </div>
-          <div className="container-wide relative z-10 text-center">
-            <Reveal>
-              <span className="section-label justify-center">Work With Us</span>
-            </Reveal>
-            <Reveal delay={0.15}>
-              <h2 className="section-heading mt-3">
-                Ready to Start Your <span>Project?</span>
-              </h2>
-            </Reveal>
-            <Reveal delay={0.25}>
-              <p className="mt-5 max-w-lg mx-auto" style={{ fontSize: '0.9rem' }}>
-                Every great building begins with a conversation. Tell us your vision and let&apos;s create something extraordinary together.
-              </p>
-            </Reveal>
-            <Stagger
-              className="mt-10 flex flex-wrap gap-4 justify-center"
-              
-            >
-              <Link href="/contact" className="btn-primary inline-flex items-center gap-3">
-                <span>Start a Conversation</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </Link>
-              <Link href="/awards" className="btn-outline inline-flex items-center gap-3">
-                <span>See Our Awards</span>
-              </Link>
-            </Stagger>
-          </div>
-        </section>
+        <TestimonialsSection data={testimonials} />
 
       </main >
 
     </>
   );
 }
+
+
+
+

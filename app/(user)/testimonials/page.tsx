@@ -94,8 +94,8 @@ async function getTestimonials(): Promise<Testimonial[]> {
     const json = await res.json();
     return json.success
       ? (json.data as Testimonial[])
-          .filter((t) => t.published)
-          .sort((a, b) => a.sortOrder - b.sortOrder)
+        .filter((t) => t.published)
+        .sort((a, b) => a.sortOrder - b.sortOrder)
       : [];
   } catch {
     return [];
@@ -192,95 +192,99 @@ export default async function TestimonialsPage() {
           <section
             className="section-dark"
             style={{
-              padding:
-                'var(--section-py) 0',
+              padding: 'var(--section-py) 0',
             }}
           >
             <div className="container-wide">
 
               <div
-                className="grid md:grid-cols-2 xl:grid-cols-3 gap-px"
+                className="grid md:grid-cols-2 xl:grid-cols-4 gap-6"
               >
-                {testimonials.map(
-                  (item) => (
-                    <article
-                      key={item.id}
-                      className="service-card"
+                {testimonials.map((item) => (
+                  <article
+                    key={item.id}
+                    className="service-card flex flex-col"
+                    style={{
+                      padding: '2.5rem',
+                    }}
+                  >
+
+                    <p
                       style={{
-                        padding:
-                          '2.5rem',
+                        fontSize: '3rem',
+                        color: 'var(--color-primary)',
+                        lineHeight: 1,
                       }}
                     >
-
-                      <p
-                        style={{
-                          fontSize:
-                            '3rem',
-                          color:
-                            'var(--color-primary)',
-                          lineHeight:
-                            1,
-                        }}
-                      >
-                        
-                      </p>
+                      
+                    </p>
 
 
-                      <p
-                        style={{
-                          fontSize:
-                            '.85rem',
-                          lineHeight:
-                            '1.9',
-                        }}
-                      >
-                        {item.content}
-                      </p>
+                    <p
+                      style={{
+                        fontSize: '.85rem',
+                        lineHeight: '1.9',
+                      }}
+                    >
+                      {item.content}
+                    </p>
 
 
-                      <div
-                        className="mt-8"
-                      >
+                    {/* always bottom */}
+                    <div
+                      className="mt-auto pt-8 flex items-center gap-4"
+                    >
+
+                      <img
+                        src={
+                          item.avatar ||
+                          '/images/default-avatar.png'
+                        }
+                        alt={item.name}
+                        className="w-14 h-14 rounded-full object-cover shrink-0"
+                      />
+
+
+                      <div>
                         <h3
                           style={{
                             fontFamily:
                               'var(--font-playfair)',
-                            color:
-                              'white',
-                            fontSize:
-                              '1rem',
+                            color: 'white',
+                            fontSize: '1rem',
                           }}
                         >
                           {item.name}
                         </h3>
 
-                        {(item.role || item.company) && (
-                          <p
-                            style={{
-                              color:
-                                'var(--color-primary)',
-                              fontSize:
-                                '.7rem',
-                              letterSpacing:
-                                '.15em',
-                              marginTop:
-                                '.5rem',
-                            }}
-                          >
-                            {[item.role, item.company].filter(Boolean).join(', ')}
-                          </p>
-                        )}
+                        {(item.role ||
+                          item.company) && (
+                            <p
+                              style={{
+                                color:
+                                  'var(--color-primary)',
+                                fontSize: '.7rem',
+                                letterSpacing:
+                                  '.15em',
+                                marginTop: '.5rem',
+                              }}
+                            >
+                              {[item.role, item.company]
+                                .filter(Boolean)
+                                .join(', ')}
+                            </p>
+                          )}
                       </div>
 
-                    </article>
-                  )
-                )}
+                    </div>
+
+                  </article>
+                ))}
               </div>
 
             </div>
           </section>
         )}
-
 
 
         {/* STATS */}

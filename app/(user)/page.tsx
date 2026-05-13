@@ -7,6 +7,7 @@ import PortfolioSection from '../../components/user/PortfolioSection';
 import TestimonialsSection from '../../components/user/TestimonialsSection';
 import prisma from '../../lib/prisma';
 import { getFeaturedProjects } from '../../lib/queries/projects';
+import { cache } from 'react';
 
 /* ─── Page-level SEO override ────────────────────────────── */
 export const metadata: Metadata = {
@@ -21,9 +22,24 @@ export const metadata: Metadata = {
   },
 };
 
+const getTestimonial = cache(async () => {
+  return prisma.testimonial.findMany({
+      where: {
+        published: true,
+      },
+      orderBy: [
+        { featured: 'desc' },
+        { sortOrder: 'asc' },
+        { createdAt: 'desc' },
+      ],
+    });
+
+})
 
 export default async function HomePage() {
   const projects = await getFeaturedProjects();
+  const testimonial = await getTestimonial();
+
   return (
     <>
       <HeroSection />
@@ -31,7 +47,7 @@ export default async function HomePage() {
       <AboutSection />
       <ServicesSection />
       <StatsSection />
-      <TestimonialsSection />
+      <TestimonialsSection data={testimonial}/>
       <BackToTop />
     </>
   );

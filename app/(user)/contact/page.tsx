@@ -51,13 +51,13 @@ export const metadata: Metadata = {
 const contactDetails = [
   {
     icon: MapPin,
-    label: "Studio Address",
-    lines: ["123 Design District", "Surat, Gujarat 395001"],
+    label: "Address",
+    lines: ["608 ASK CONSULTANT", "SHALIN CENTRUM, NEAR CROMA SHOW ROOM, SECTOR 11, GANDHINAGAR"],
   },
   {
     icon: Phone,
     label: "Phone",
-    lines: ["+91 98765 43210", "+91 97654 32109"],
+    lines: ["+91 81406 04000", "+91 97274 04110"],
   },
   {
     icon: Mail,
@@ -101,7 +101,6 @@ export default function ContactPage() {
           { label: "Contact" },
         ]}
       />
-
       <main>
 
         {/* CONTACT */}
@@ -230,12 +229,14 @@ export default function ContactPage() {
                       minHeight: "280px",
                     }}
                   >
-
-                    <iframe
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d188.88822928733236!2d72.64800234969884!3d23.215445328933765!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMjPCsDEyJzU1LjQiTiA3MsKwMzgnNTIuNiJF!5e1!3m2!1sen!2sin!4v1778673698279!5m2!1sen!2sin"
+                      className="map-embed w-full h-full rounded-xl border-0"
                       title="Map"
-                      src="https://maps.google.com/maps?q=Surat,Gujarat,India&z=14&output=embed"
-                      className="w-full h-full"
-                    />
+                      width="600"
+                      height="450"
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"></iframe>
 
                   </div>
                 </Reveal>

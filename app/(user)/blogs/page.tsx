@@ -278,65 +278,6 @@ export default async function BlogPage() {
 
           </div>
         </section>
-
-
-
-        {/* CTA */}
-        <section
-          className="relative overflow-hidden"
-          style={{
-            padding: '6rem 0',
-          }}
-        >
-
-          <div className="absolute inset-0">
-
-            <img
-              src="/images/about-office.png"
-              alt=""
-              className="w-full h-full object-cover"
-            />
-
-            <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  'rgba(13,13,13,.87)',
-              }}
-            />
-          </div>
-
-
-          <div className="container-wide relative z-10 text-center">
-
-            <Reveal>
-              <span className="section-label justify-center">
-                Stay Inspired
-              </span>
-            </Reveal>
-
-            <Reveal delay={0.2}>
-              <h2 className="section-heading mt-4">
-                Design Ideas That
-                <span>
-                  Endure
-                </span>
-              </h2>
-            </Reveal>
-
-            <div className="mt-8">
-              <Link
-                href="/contact"
-                className="btn-primary inline-flex items-center gap-3 hover:!text-background"
-              >
-
-                <span> Start a Conversation</span>
-              </Link>
-            </div>
-
-          </div>
-        </section>
-
       </main>
     </>
   );
