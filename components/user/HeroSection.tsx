@@ -5,30 +5,30 @@ import { useState, useEffect, useCallback } from 'react';
 const slides = [
   {
     id: 0,
-    image:    'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=1600&q=85',
-    label:    'Residential Excellence',
-    heading:  ['Crafting', 'Timeless', 'Spaces'],
-    sub:      'Architecture that tells your story — from concept to completion, we build futures worth living in.',
-    cta:      { label: 'Explore Our Work', href: '/portfolio' },
-    cta2:     { label: 'Our Story', href: '/about' },
+    image: '', //'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=1600&q=85',
+    label: 'Residential Excellence',
+    heading: ['Crafting', 'Timeless', 'Spaces'],
+    sub: 'Architecture that tells your story — from concept to completion, we build futures worth living in.',
+    cta: { label: 'Explore Our Work', href: '/portfolio' },
+    cta2: { label: 'Our Story', href: '/about' },
   },
   {
     id: 1,
-    image:    'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1600&q=85',
-    label:    'Commercial Design',
-    heading:  ['Bold', 'Visions,', 'Built'],
-    sub:      'Transforming skylines and cityscapes through precision engineering and artistic brilliance.',
-    cta:      { label: 'View Portfolio', href: '/portfolio' },
-    cta2:     { label: 'Our Services', href: '/services' },
+    image: '/image/slider-2.png', //'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1600&q=85',
+    label: 'Commercial Design',
+    heading: ['Bold', 'Visions,', 'Built'],
+    sub: 'Transforming skylines and cityscapes through precision engineering and artistic brilliance.',
+    cta: { label: 'View Portfolio', href: '/portfolio' },
+    cta2: { label: 'Our Services', href: '/services' },
   },
   {
     id: 2,
-    image:    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=85',
-    label:    'Interior Mastery',
-    heading:  ['Interior', 'Worlds', 'Reimagined'],
-    sub:      'Every room, every corner — a curated composition of light, material, and human experience.',
-    cta:      { label: 'See Our Interiors', href: '/portfolio' },
-    cta2:     { label: 'Get a Quote', href: '/contact' },
+    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=85',
+    label: 'Interior Mastery',
+    heading: ['Interior', 'Worlds', 'Reimagined'],
+    sub: 'Every room, every corner — a curated composition of light, material, and human experience.',
+    cta: { label: 'See Our Interiors', href: '/portfolio' },
+    cta2: { label: 'Get a Quote', href: '/contact' },
   },
 ];
 
@@ -67,7 +67,11 @@ export default function HeroSection() {
           {/* BG */}
           <div
             className={`hero-bg ${i === current ? 'zoomed' : ''}`}
-            style={{ backgroundImage: `url(${slide.image})` }}
+            style={{
+              backgroundImage: `url('/images/slider-${i + 1}.png')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
           />
           {/* Gradient overlay */}
           <div className="absolute inset-0 z-[1]"
@@ -141,7 +145,7 @@ export default function HeroSection() {
           >
             <span>{slides[current].cta.label}</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
+              <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
           </button>
           <button
@@ -224,8 +228,8 @@ export default function HeroSection() {
               letterSpacing: '0.1em',
               transition: 'color 0.2s ease',
             }}
-            // onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-primary)')}
-            // onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.35)')}
+          // onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-primary)')}
+          // onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.35)')}
           >
             {s}
           </a>

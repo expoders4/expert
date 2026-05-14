@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Bell, ExternalLink, User } from 'lucide-react'
+import { Bell, ExternalLink, Menu, User } from 'lucide-react'
 
 interface AdminUser { name: string; email: string; role: string }
 
-export default function AdminHeader() {
+export default function AdminHeader({ onMenuClick }: { onMenuClick?: () => void }) {
   const [user, setUser] = useState<AdminUser | null>(null)
   const [unread, setUnread] = useState(0)
 
@@ -15,20 +15,28 @@ export default function AdminHeader() {
     fetch('/api/auth/me')
       .then((r) => r.json())
       .then((d) => d.success && setUser(d.data.user))
-      .catch(() => {})
+      .catch(() => { })
 
     // Fetch unread message count
     fetch('/api/contact?status=UNREAD&limit=1')
       .then((r) => r.json())
       .then((d) => d.success && setUnread(d.data.meta?.total || 0))
-      .catch(() => {})
+      .catch(() => { })
   }, [])
 
   return (
     <header className="h-16 bg-white border-b border-stone-200 flex items-center justify-between px-6 shrink-0">
-      <div>
-        <h1 className="text-sm font-medium text-stone-900">Archform Studio</h1>
-        <p className="text-xs text-stone-400">Content Management System</p>
+      <div className="flex align-center gap-3">
+        <button
+          className="lg:hidden text-stone-300"
+          onClick={onMenuClick}
+        >
+          <Menu className="w-5 h-5 text-primary" />
+        </button>
+        <div>
+          <h1 className="text-sm font-medium text-stone-900">Archform Studio</h1>
+          <p className="text-xs text-stone-400 hidden sm:block">Content Management System</p>
+        </div>
       </div>
 
       <div className="flex items-center gap-4">
@@ -36,7 +44,7 @@ export default function AdminHeader() {
         <Link
           href="/"
           target="_blank"
-          className="flex items-center gap-1.5 text-xs text-stone-500 hover:text-brand-600 transition-colors"
+          className="flex items-center gap-1.5 text-xs text-stone-500 hover:text-brand-600 transition-colors hidden sm:block"
         >
           <ExternalLink className="w-3.5 h-3.5" />
           View Site

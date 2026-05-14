@@ -21,16 +21,13 @@ export default function AdminLoginPage() {
     const checkAuth = async () => {
       try {
         const res = await fetch('/api/auth/me', {
-          method: 'GET',
           credentials: 'include',
         })
 
         if (res.ok) {
           router.replace('/admin/dashboard')
         }
-      } catch (error) {
-        // ignore error → stay on login page
-      } 
+      } catch { }
     }
 
     checkAuth()
@@ -73,7 +70,7 @@ export default function AdminLoginPage() {
         {/* Logo */}
         <div className="text-center mb-10">
           <div className="w-14 h-14 border-2 border-brand-500 flex items-center justify-center mx-auto mb-4">
-            <span className="text-brand-400 text-lg font-bold tracking-wider">AS</span>
+            <span className="text-primary text-lg font-bold tracking-wider">AS</span>
           </div>
           <h1 className="text-2xl font-light text-white tracking-wider" style={{ fontFamily: 'var(--font-display)' }}>
             Archform Studio
@@ -142,16 +139,12 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-brand-600 hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed
-                         text-white py-3 text-sm font-medium tracking-widest uppercase transition-colors duration-200 rounded"
+              className="btn-primary w-full "
             >
-              {isSubmitting ? 'Signing In...' : 'Sign In'}
+              <span className="mx-auto">{isSubmitting ? 'Signing In...' : 'Sign In'}</span>
             </button>
           </form>
-
-          <p className="text-center text-stone-600 text-xs mt-6">
-            Default: admin@architectfirm.com / Admin@123
-          </p>
+          
         </div>
       </div>
     </div>

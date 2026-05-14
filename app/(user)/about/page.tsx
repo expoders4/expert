@@ -2,9 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import PageHero from '../../../components/user/pageHero';
-import StatsSection from '../../../components/user/StatsSection';
-import TestimonialsSection from '../../../components/user/TestimonialsSection';
-import { HoverCard, ParallaxImage, Reveal, Stagger } from '../../../components/animations';
+import { HoverCard, Reveal, Stagger } from '../../../components/animations';
 import prisma from '../../../lib/prisma';
 import { cache } from 'react';
 
@@ -175,40 +173,46 @@ const milestones = [
 ];
 
 /* ─── Partners / Clients ─────────────────────────────────── */
-const partners = ['Heatherwick Studio', 'Arup Engineering', 'Vitra', 'Knoll', 'Cassina', 'Fritz Hansen', 'Interface', 'Bolon'];
+const defaultTeamProfile = 'https://static.vecteezy.com/system/resources/previews/034/954/571/non_2x/ai-generated-business-man-character-profile-free-png.png';
 
 const getAboutData = cache(async () => {
-  const features = await prisma.feature.findMany({
+  return await prisma.team.findMany({
     where: {
-      published: true,
+      active: true,
+    },
+    include: {
+      projects: {
+        include: {
+          project: true,
+        },
+      },
     },
     orderBy: [
-      { featured: 'desc' },
       { sortOrder: 'asc' },
       { createdAt: 'desc' },
     ],
   });
 
-  const testimonials = await prisma.testimonial.findMany({
-    where: {
-      published: true,
-      status: 'APPROVED',
-    },
-    orderBy: [
-      { featured: 'desc' },
-      { sortOrder: 'asc' },
-      { createdAt: 'desc' },
-    ],
-  });
+  // const testimonials = await prisma.testimonial.findMany({
+  //   where: {
+  //     published: true,
+  //     status: 'APPROVED',
+  //   },
+  //   orderBy: [
+  //     { featured: 'desc' },
+  //     { sortOrder: 'asc' },
+  //     { createdAt: 'desc' },
+  //   ],
+  // });
 
-  return {
-    features,
-    testimonials,
-  };
+  // return {
+  //   features,
+  //   testimonials,
+  // };
 });
 
 export default async function AboutPage() {
-const { features, testimonials } = await getAboutData();
+  const teams = await getAboutData();
   return (
     <>
       {/* JSON-LD */}
@@ -261,7 +265,7 @@ const { features, testimonials } = await getAboutData();
                     with their most important spaces.
                   </p>
                   <div className="mt-10">
-                    <Link href="/projects" className="btn-primary inline-flex items-center gap-3">
+                    <Link href="/project" className="btn-primary inline-flex items-center gap-3">
                       <span>View Our Portfolio</span>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M5 12h14M12 5l7 7-7 7" />
@@ -271,12 +275,10 @@ const { features, testimonials } = await getAboutData();
                 </div>
 
                 {/* Image grid */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3">
                   {[
-                    { src: '/images/about-office.png', alt: 'Modern commercial architecture', tall: true },
-                    { src: '/images/about-office.png', alt: 'Residential interior design', tall: false },
-                    { src: '/images/about-office.png', alt: 'Commercial office space', tall: false },
-                    { src: '/images/about-office.png', alt: 'Cultural building exterior', tall: true },
+                    { src: '/images/about/team.png', alt: 'Modern commercial architecture', tall: true },
+                    
                   ].map((img, i) => (
                     <div
                       key={i}
@@ -292,7 +294,7 @@ const { features, testimonials } = await getAboutData();
                         alt={img.alt}
                         fill
                         sizes="(max-width: 1024px) 50vw, 25vw"
-                        className="object-cover transition-transform duration-700 hover:scale-105"
+                        className="object-cover rounded-3xl transition-transform duration-700 hover:scale-105"
                       />
                     </div>
                   ))}
@@ -301,57 +303,6 @@ const { features, testimonials } = await getAboutData();
             </div>
           </section>
         </Reveal>
-
-        {/* ── VALUES ────────────────────────────────────────── */}
-        <section
-          className="section-dark"
-          style={{ padding: 'var(--section-py) 0' }}
-          aria-labelledby="values-heading"
-        >
-          <div className="container-wide">
-            <div className="text-center mb-14">
-              <span className="section-label justify-center">Core Values</span>
-              <h2 id="values-heading" className="section-heading">
-                The Principles That <span>Guide Us</span>
-              </h2>
-              <span className="gold-divider mx-auto" />
-            </div>
-            <Stagger>
-              <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-px" style={{ background: 'var(--color-dark4)' }}>
-                {values.map((v) => (
-                  <article
-                    key={v.number}
-                    className="service-card group"
-                    style={{ padding: '2.5rem 2rem' }}
-                  >
-                    <p style={{
-                      fontFamily: 'var(--font-dm-mono)',
-                      fontSize: '2.5rem',
-                      fontWeight: 300,
-                      color: 'rgba(200,169,110,0.2)',
-                      lineHeight: 1,
-                      marginBottom: '1.25rem',
-                      transition: 'color 0.3s ease',
-                    }}
-                      className="group-hover:!text-primary"
-                    >
-                      {v.number}
-                    </p>
-                    <h3 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.05rem', fontWeight: 700, color: 'var(--color-white)', marginBottom: '0.85rem' }}>
-                      {v.title}
-                    </h3>
-                    <p style={{ fontSize: '0.83rem', lineHeight: '1.85' }}>
-                      {v.desc}
-                    </p>
-                  </article>
-                ))}
-              </div>
-            </Stagger>
-          </div>
-        </section>
-
-        {/* ── STATS ─────────────────────────────────────────── */}
-        <StatsSection />
 
         {/* ── TIMELINE ──────────────────────────────────────── */}
         <Reveal>
@@ -431,161 +382,216 @@ const { features, testimonials } = await getAboutData();
           </section>
         </Reveal>
         {/* ── TEAM ──────────────────────────────────────────── */}
-        <Reveal>
-          <section
-            className="section-dark"
-            style={{ padding: 'var(--section-py) 0' }}
-            aria-labelledby="team-heading"
-          >
-            <div className="container-wide">
-              <Reveal delay={0.2}>
-                <div className="text-center mb-14">
-                  <span className="section-label justify-center">The Team</span>
-                  <h2 id="team-heading" className="section-heading">
-                    The People Behind <span>Every Project</span>
-                  </h2>
-                  <span className="gold-divider mx-auto" />
-                  <p className="mt-5 max-w-xl mx-auto" style={{ fontSize: '0.88rem' }}>
-                    85 architects, designers, engineers, and dreamers — united by an obsessive commitment
-                    to creating spaces that matter.
-                  </p>
-                </div>
-              </Reveal>
-              <Stagger>
-                <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-px" style={{ background: 'var(--color-dark4)' }}>
-                  {team.map((member) => (
-                      <article key={member.name} className="group" style={{ background: 'var(--color-dark3)', overflow: 'hidden' }}>
-                        {/* Photo */}
-                          <div className="relative overflow-hidden" style={{ aspectRatio: '4/3' }}>
-                            <Image
-                              src={member.image}
-                              alt={`${member.name} — ${member.role} at TOUGH Architects`}
-                              fill
-                              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                              className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
-                            />
-                            {/* Hover overlay */}
-                            <div
-                              className="absolute inset-0 flex items-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                              style={{ background: 'linear-gradient(to top, rgba(13,13,13,0.95) 0%, transparent 60%)' }}
-                            >
-                              <div className="flex gap-3">
-                                {[member.social.li, member.social.ig].map((href, i) => (
-                                  <a
-                                    key={i}
-                                    href={href}
-                                    style={{
-                                      width: '34px', height: '34px',
-                                      border: '1px solid rgba(200,169,110,0.5)',
-                                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                      color: 'var(--color-primary)',
-                                      transition: 'all 0.2s ease',
-                                    }}
-                                    aria-label={i === 0 ? `${member.name} LinkedIn` : `${member.name} Instagram`}
-                                  >
-                                    {i === 0 ? (
-                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" /><circle cx="4" cy="4" r="2" />
-                                      </svg>
-                                    ) : (
-                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                        <rect x="2" y="2" width="20" height="20" rx="5" /><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" /><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-                                      </svg>
-                                    )}
-                                  </a>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-
-                        {/* Info */}
-                        <div className="p-6 border-b" style={{ borderColor: 'var(--color-dark4)' }}>
-                          <h3 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-white)', marginBottom: '2px' }}>
-                            {member.name}
-                          </h3>
-                          <p style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--color-primary)' }}>
-                            {member.role}
-                          </p>
-                          <p className="mt-3" style={{ fontSize: '0.8rem', lineHeight: '1.75' }}>
-                            {member.bio}
-                          </p>
-                        </div>
-
-                        {/* Qualifications */}
-                        <ul className="px-6 py-4 space-y-1.5">
-                          {member.quals.map(q => (
-                            <li key={q} className="flex items-center gap-2">
-                              <span style={{ width: '14px', height: '1px', background: 'var(--color-primary)', flexShrink: 0 }} />
-                              <span style={{ fontSize: '0.7rem', color: 'var(--color-muted)', letterSpacing: '0.04em' }}>{q}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </article>
-                  ))}
-                </div>
-              </Stagger>
-
-              {/* CTA */}
-              <Reveal delay={0.4}>
-                <div className="text-center mt-12">
-                  <p style={{ fontSize: '0.85rem', color: 'var(--color-muted)', marginBottom: '1.25rem' }}>
-                    Interested in joining our team?
-                  </p>
-                  <Link href="/contact" className="btn-outline inline-flex items-center gap-3">
-                    <span>View Open Positions</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                </div>
-              </Reveal>
-            </div>
-          </section>
-        </Reveal>
-        {/* ── PARTNERS ──────────────────────────────────────── */}
-        <section
-          className="section-dark2"
-          style={{ padding: '4rem 0', borderTop: '1px solid var(--color-dark4)', borderBottom: '1px solid var(--color-dark4)' }}
-          aria-label="Our partners and collaborators"
-        >
+        <div className="teams-section"
+          style={{ padding: 'var(--section-py) 0' }}>
           <div className="container-wide">
-            <Reveal>
-              <p className="text-center mb-8" style={{ fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--color-muted)' }}>
-                Trusted Partners & Collaborators
-              </p>
-            </Reveal>
-            <Stagger
-              className="flex flex-wrap items-center justify-center gap-8 md:gap-12"
-            >
-              {partners.map(p => (
-                <HoverCard key={p}>
-                  <span
-                    key={p}
-                    style={{
-                      fontFamily: 'var(--font-playfair)',
-                      fontSize: '0.95rem',
-                      fontWeight: 600,
-                      color: 'var(--color-muted2)',
-                      letterSpacing: '0.02em',
-                      transition: 'color 0.3s ease',
-                      cursor: 'default',
-                    }}
-                  // onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-primary)')}
-                  // onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-muted2)')}
-                  >
-                    {p}
-                  </span>
-                </HoverCard>
-              ))}
-            </Stagger>
-          </div>
-        </section>
+            <div className="text-center mb-14">
+              <span
+                style={{
+                  color: 'var(--color-primary)',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.22em',
+                  textTransform: 'uppercase',
+                  display: 'block',
+                  marginBottom: '12px',
+                }}
+              >
+                Our Team
+              </span>
 
-        {/* ── TESTIMONIALS ──────────────────────────────────── */}
-        <TestimonialsSection data={testimonials} />
+              <h2
+                style={{
+                  fontFamily: 'var(--font-playfair)',
+                  fontSize: 'clamp(2rem,4vw,3.5rem)',
+                  fontWeight: 700,
+                  color: 'var(--color-white)',
+                  marginBottom: '18px',
+                  lineHeight: 1.2,
+                }}
+              >
+                The People Behind{' '}
+                <span style={{ color: 'var(--color-primary)' }}>
+                  Every Project
+                </span>
+              </h2>
+
+              <div
+                style={{
+                  width: '80px',
+                  height: '1px',
+                  background: 'var(--color-primary)',
+                  margin: '0 auto 24px',
+                }}
+              />
+
+              <p
+                style={{
+                  maxWidth: '700px',
+                  margin: '0 auto',
+                  fontSize: '0.95rem',
+                  lineHeight: 1.8,
+                  color: 'var(--color-muted)',
+                }}
+              >
+                Our multidisciplinary team of architects, designers,
+                engineers, and creative thinkers brings vision,
+                precision, and innovation to every project—transforming
+                ideas into timeless architectural experiences.
+              </p>
+            </div>
+            <div className="row">
+              <div className={`
+                    grid gap-5 mx-auto
+                    ${teams?.length >= 4
+                  ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
+                  : teams?.length === 3
+                    ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl'
+                    : teams?.length === 2
+                      ? 'grid-cols-1 sm:grid-cols-2 max-w-3xl'
+                      : 'grid-cols-1 max-w-sm'
+                }
+                  `}>
+                {teams?.map((member) => (
+                  <article
+                    key={member.id}
+                    className="group flex flex-col h-full"
+                    style={{
+                      background: 'var(--color-dark3)',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    {/* Photo */}
+                    <div
+                      className="relative overflow-hidden"
+                      style={{ aspectRatio: '4/3' }}
+                    >
+                      <Image
+                        src={member.image || defaultTeamProfile}
+                        alt={`${member.name} — ${member.designation}`}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                        className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                      />
+
+                      {/* Hover social */}
+                      <div
+                        className="absolute inset-0 flex items-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                        style={{
+                          background:
+                            'linear-gradient(to top, rgba(13,13,13,0.95) 0%, transparent 60%)',
+                        }}
+                      >
+                        <div className="flex gap-3">
+                          {member.linkedin && (
+                            <a
+                              href={member.linkedin}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              aria-label={`${member.name} LinkedIn`}
+                              style={{
+                                width: '34px',
+                                height: '34px',
+                                border: '1px solid rgba(200,169,110,0.5)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: 'var(--color-primary)',
+                              }}
+                            >
+                              <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                              >
+                                <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" />
+                                <circle cx="4" cy="4" r="2" />
+                              </svg>
+                            </a>
+                          )}
+
+                          {member.twitter && (
+                            <a
+                              href={member.twitter}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              aria-label={`${member.name} Twitter`}
+                              style={{
+                                width: '34px',
+                                height: '34px',
+                                border: '1px solid rgba(200,169,110,0.5)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: 'var(--color-primary)',
+                              }}
+                            >
+                              <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                              >
+                                <path d="M22 5.8c-.7.3-1.5.5-2.3.6a4 4 0 001.8-2.2 8 8 0 01-2.5 1A4 4 0 0016 4a4 4 0 00-4 4c0 .3 0 .6.1.9A11.4 11.4 0 013 5.1a4 4 0 001.2 5.4 4 4 0 01-1.8-.5v.1a4 4 0 003.2 3.9c-.3.1-.7.1-1 .1-.2 0-.5 0-.7-.1a4 4 0 003.7 2.8A8 8 0 012 19.5 11.3 11.3 0 008.3 21c7.5 0 11.6-6.2 11.6-11.6v-.5c.8-.5 1.5-1.2 2.1-2.1z" />
+                              </svg>
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+
+                    {/* Info */}
+                    <div
+                      className="p-6 border-b"
+                      style={{
+                        borderColor: 'var(--color-dark4)',
+                      }}
+                    >
+                      <h3>{member.name}</h3>
+
+                      <p>{member.designation}</p>
+
+                      {member.bio && (
+                        <p className="mt-3">
+                          {member.bio}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Contact always bottom */}
+                    <div className="mt-auto px-6 py-4 space-y-2">
+                      {member.email && (
+                        <p
+                          style={{
+                            fontSize: '0.72rem',
+                            color: 'var(--color-muted)',
+                          }}
+                        >
+                          {member.email}
+                        </p>
+                      )}
+
+                      {member.phone && (
+                        <p
+                          style={{
+                            fontSize: '0.72rem',
+                            color: 'var(--color-muted)',
+                          }}
+                        >
+                          {member.phone}
+                        </p>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
 
       </main >
-
     </>
   );
 }

@@ -2,11 +2,9 @@ import Link from 'next/link'
 import { MapPin, Phone, Mail, Instagram, Linkedin, Facebook } from 'lucide-react'
 
 const projectLinks = [
-  { label: 'Private Bungalows', href: '/projects/private_bungalow' },
-  { label: 'Residential Housing', href: '/projects/residential' },
-  { label: 'Hospitality', href: '/projects/hospitality' },
-  { label: 'Commercial', href: '/projects/commercial' },
-  { label: 'Cultural Complex', href: '/projects/cultural' },
+  { label: 'Architecture', href: '/project-category/architecture' },
+  { label: 'Interior', href: '/project-category/interior' },
+  { label: 'Cultural Complexes', href: '/project-category/cultural-complex' },
 ]
 const quickLinks = [
   { label: 'About Us', href: '/about' },
@@ -20,9 +18,10 @@ const quickLinks = [
 export default function Footer() {
   return (
     <footer className="bg-stone-900 text-stone-300 ">
-      <div className="container-wide">
 
-        {/* CTA strip */}
+
+      {/* CTA strip */}
+      <div className="container-wide">
         <div className="bg-primary-800 py-14">
           <div className="text-center">
             <p className="section-label text-primary-300 mb-3">Start Your Project</p>
@@ -91,8 +90,11 @@ export default function Footer() {
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="border-t border-stone-800 py-5">
+
+      <div className="border-t border-stone-800 py-5">
+        <div className="container-wide">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-stone-500">
             <p>© {new Date().getFullYear()} ArchStudio. All rights reserved.</p>
             <div className="flex gap-5">

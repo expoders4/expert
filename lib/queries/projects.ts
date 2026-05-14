@@ -1,15 +1,21 @@
 import prisma from "../prisma";
 
-export const getFeaturedProjects = async () => {
-  return await prisma.project.findMany({
+export async function getFeaturedProjects(
+  limit?: number
+) {
+  return prisma.project.findMany({
     where: {
       published: true,
+      featured: true,
     },
     include: {
       subCategory: true,
     },
-    orderBy: {
-      sortOrder: "asc",
-    },
+    orderBy: [
+      { createdAt: 'desc' },
+    ],
+    ...(limit && {
+      take: limit,
+    }),
   });
-};
+}

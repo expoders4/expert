@@ -46,9 +46,9 @@ async function getCategories() {
 
 export default async function ProjectsPage() {
   const categories = await getCategories();
-    
 
-return (
+
+  return (
     <>
       <main>
         <PageHero
@@ -56,7 +56,7 @@ return (
           title="Project"
           titleAccent="Categories"
           subtitle="Explore our work across sectors, scales, and continents."
-          image="/images/projects-hero.jpg"
+          image="/images/project-banner.png"
           imageAlt="TOUGH Architects recognitions"
           breadcrumbs={[
             { label: "Home", href: "/" },
@@ -71,7 +71,7 @@ return (
         >
           <div className="container-wide">
 
-            <Stagger className="grid md:grid-cols-2 gap-8">
+            <Stagger className="grid md:grid-cols-3 gap-8">
 
               {categories.map((project: any) => (
 
@@ -97,14 +97,9 @@ return (
                         />
                       </div>
 
-                      <div className="p-8">
-
-                        <p className="section-label">
-                          {project.subtitle}
-                        </p>
-
+                      <div className="p-6">
                         <h2
-                          className="mt-3"
+                          className=""
                           style={{
                             fontFamily:
                               "var(--font-playfair)",
@@ -113,11 +108,11 @@ return (
                               "var(--color-white)",
                           }}
                         >
-                          {project.title}
+                          {project.name}
                         </h2>
 
                         <p
-                          className="mt-4"
+                          className="mt-2"
                           style={{
                             fontSize: ".9rem",
                             lineHeight: 1.8,
@@ -125,6 +120,24 @@ return (
                         >
                           {project.description}
                         </p>
+
+                        <div className="mt-5 flex items-center gap-3 text-primary uppercase text-xs tracking-[.2em]">
+
+                          Explore
+
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            className="group-hover:translate-x-1 transition"
+                          >
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                          </svg>
+
+                        </div>
 
                       </div>
 

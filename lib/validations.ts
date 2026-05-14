@@ -1,6 +1,5 @@
 import { z } from 'zod'
 
-
 /* Login */
 export const loginSchema = z.object({
   email: z
@@ -347,46 +346,66 @@ export const testimonialSchema = z.object({
 export type TestimonialInput = z.infer<typeof testimonialSchema>
 
 
-export const contactSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(2, 'Name is required')
-    .max(100, 'Maximum 100 characters'),
 
-  email: z
-    .string()
-    .trim()
-    .min(1, 'Email is required')
-    .email('Please enter a valid email address'),
 
-  phone: z
-    .string()
-    .trim()
-    .optional()
-    .or(z.literal(''))
-    .refine(
-      (value) =>
-        !value ||
-        /^[+]?[\d\s\-()]{8,20}$/.test(value),
-      {
-        message: 'Please enter a valid phone number',
-      }
-    ),
+export const contactSchema =
+  z.object({
 
-  subject: z
-    .string()
-    .min(1, 'Please select project type'),
+    name: z
+      .string()
+      .trim()
+      .min(
+        2,
+        'Name is required'
+      )
+      .max(
+        100,
+        'Maximum 100 characters'
+      ),
 
-  message: z
-    .string()
-    .trim()
-    .min(10, 'Message must be at least 10 characters')
-    .max(1000, 'Maximum 1000 characters'),
-})
+    email: z
+      .string()
+      .trim()
+      .min(
+        1,
+        'Email is required'
+      )
+      .email(
+        'Please enter a valid email address'
+      ),
+
+    countryCode: z.string().min(1, "Select country code"),
+    phone: z
+      .string()
+      .min(10, "Phone must be at least 10 digits")
+      .max(15, "Phone is too long")
+      .regex(/^[+\d\s\-()]+$/, "Invalid phone number"),
+
+    subject: z
+      .string()
+      .min(
+        1,
+        'Please select project type'
+      ),
+
+    message: z
+      .string()
+      .trim()
+      .min(
+        10,
+        'Message must be at least 10 characters'
+      )
+      .max(
+        1000,
+        'Maximum 1000 characters'
+      ),
+
+  })
 
 export type ContactInput =
-  z.infer<typeof contactSchema>
+  z.infer<
+    typeof contactSchema
+  >
 
 
 

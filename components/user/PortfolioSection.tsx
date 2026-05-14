@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
-const categories = ['All', 'Residential', 'Commercial', 'Interior', 'Cultural'];
 
 type ProjectType = {
   id: string;
@@ -13,7 +12,7 @@ type ProjectType = {
   year?: number | null;
   thumbnail?: string | null;
   image?: string | null;
-coverImage?: string | null;
+  coverImage?: string | null;
   featured?: boolean;
   subCategory?: {
     id: string;
@@ -35,11 +34,21 @@ export default function PortfolioSection({
 }) {
   const [active, setActive] = useState('All');
   const sectionRef = useRef<HTMLElement>(null);
-  const filtered = projects.filter(
-    (p) =>
-      active === 'All' ||
-      p.subCategory?.name === active
-  );
+  const categories = [
+    'All',
+    ...new Set(
+      projects
+        .map((p) => p.subCategory?.name)
+        .filter((name): name is string => Boolean(name))
+    ),
+  ];
+
+  const filtered =
+    active === 'All'
+      ? projects
+      : projects.filter(
+        (p) => p.subCategory?.name === active
+      );
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -102,7 +111,7 @@ export default function PortfolioSection({
 
           {/* Filter buttons */}
           <div className="flex flex-wrap gap-2 reveal">
-            {categories.map(cat => (
+            {categories.map((cat) => (
               <button
                 key={cat}
                 type="button"
@@ -114,9 +123,18 @@ export default function PortfolioSection({
                   fontWeight: 700,
                   letterSpacing: '0.2em',
                   textTransform: 'uppercase',
-                  border: `1px solid ${cat === active ? 'var(--color-primary)' : 'var(--color-dark4)'}`,
-                  background: cat === active ? 'var(--color-primary)' : 'transparent',
-                  color: cat === active ? 'var(--color-dark)' : 'var(--color-muted)',
+                  border: `1px solid ${cat === active
+                    ? 'var(--color-primary)'
+                    : 'var(--color-dark4)'
+                    }`,
+                  background:
+                    cat === active
+                      ? 'var(--color-primary)'
+                      : 'transparent',
+                  color:
+                    cat === active
+                      ? 'var(--color-dark)'
+                      : 'var(--color-muted)',
                   transition: 'all 0.3s ease',
                   cursor: 'pointer',
                 }}

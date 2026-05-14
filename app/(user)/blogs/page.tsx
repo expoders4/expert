@@ -75,7 +75,7 @@ export default async function BlogPage() {
           title="Ideas That"
           titleAccent="Shape Architecture"
           subtitle="Stories, insights, process, philosophy, and design thinking from our studio."
-          image="/images/about-office.png"
+          image="/images/blog-banner.png"
           imageAlt="TOUGH Architects Journal"
           breadcrumbs={[
             {

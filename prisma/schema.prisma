@@ -7,17 +7,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model admin {
+model Admin {
   id        String   @id @default(uuid())
   name      String
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  blogs     blog[]
+
+  blogs     Blog[]
+
+  @@map("admins")
 }
 
-model blog {
+model Blog {
   id              String     @id @default(uuid())
   title           String
   slug            String     @unique
@@ -35,15 +38,18 @@ model blog {
   metaTitle       String?
   publishedAt     DateTime?
   sortOrder       Int        @default(0)
-  status          blogStatus @default(DRAFT)
+  status          BlogStatus @default(DRAFT)
   tags            Json?
   thumbnail       String?
   views           Int        @default(0)
-  author          admin      @relation(fields: [authorId], references: [id])
+
+  author          Admin      @relation(fields: [authorId], references: [id])
 
   @@index([slug])
   @@index([published])
   @@index([category])
+
+  @@map("blogs")
 }
 
 model ProjectCategory {
@@ -51,11 +57,12 @@ model ProjectCategory {
   name          String               @unique
   slug          String               @unique
   description   String?
+  image         String?
   sortOrder     Int                  @default(0)
   createdAt     DateTime             @default(now())
   updatedAt     DateTime             @updatedAt
-  image         String?
-  awards        award[]
+
+  awards        Award[]
   subCategories ProjectSubCategory[]
 
   @@map("project_categories")
@@ -67,14 +74,16 @@ model ProjectSubCategory {
   name        String
   slug        String
   description String?
+  image       String?
   sortOrder   Int             @default(0)
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
-  image       String?
+
   category    ProjectCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   projects    Project[]
 
   @@unique([categoryId, slug])
+
   @@map("project_sub_categories")
 }
 
@@ -100,8 +109,11 @@ model Project {
   updatedAt        DateTime           @updatedAt
   subCategoryId    String
   status           ProjectStatus?
-  gallery          ProjectGallery[]
+
   subCategory      ProjectSubCategory @relation(fields: [subCategoryId], references: [id], onDelete: Cascade)
+
+  gallery          ProjectGallery[]
+  teamMembers      ProjectTeam[]
 
   @@map("projects")
 }
@@ -115,12 +127,13 @@ model ProjectGallery {
   sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@map("project_galleries")
 }
 
-model award {
+model Award {
   id           String           @id @default(uuid())
   title        String
   slug         String           @unique
@@ -134,14 +147,17 @@ model award {
   sortOrder    Int              @default(0)
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
+
   categoryId   String?
   category     ProjectCategory? @relation(fields: [categoryId], references: [id])
 
   @@index([slug])
   @@index([published])
+
+  @@map("awards")
 }
 
-model feature {
+model Feature {
   id          String   @id @default(uuid())
   title       String
   slug        String   @unique
@@ -158,9 +174,11 @@ model feature {
   @@index([slug])
   @@index([published])
   @@index([category])
+
+  @@map("features")
 }
 
-model inquiry {
+model Inquiry {
   id          String        @id @default(uuid())
   senderName  String
   senderEmail String
@@ -168,11 +186,13 @@ model inquiry {
   projectType String?
   subject     String
   message     String
-  status      inquiryStatus @default(UNREAD)
+  status      InquiryStatus @default(UNREAD)
   createdAt   DateTime      @default(now())
+
+  @@map("inquiries")
 }
 
-model testimonial {
+model Testimonial {
   id        String            @id @default(uuid())
   name      String
   role      String?
@@ -185,15 +205,52 @@ model testimonial {
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
   slug      String            @unique
-  status    testimonialStatus @default(PENDING)
+  status    TestimonialStatus @default(PENDING)
   content   String            @default("")
 
   @@index([published])
   @@index([featured])
   @@index([status])
+
+  @@map("testimonials")
 }
 
-enum blogStatus {
+model Team {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  designation String
+  bio         String?
+  image       String?
+  email       String?
+  phone       String?
+  linkedin    String?
+  twitter     String?
+  sortOrder   Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  projects    ProjectTeam[]
+
+  @@map("teams")
+}
+
+model ProjectTeam {
+  id         String   @id @default(uuid())
+  projectId  String
+  teamId     String
+  createdAt  DateTime @default(now())
+
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  team       Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, teamId])
+
+  @@map("project_teams")
+}
+
+enum BlogStatus {
   DRAFT
   PUBLISHED
   ARCHIVED
@@ -205,14 +262,14 @@ enum ProjectStatus {
   COMPLETED
 }
 
-enum inquiryStatus {
+enum InquiryStatus {
   UNREAD
   READ
   REPLIED
   ARCHIVED
 }
 
-enum testimonialStatus {
+enum TestimonialStatus {
   PENDING
   APPROVED
   REJECTED

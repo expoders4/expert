@@ -94,7 +94,7 @@ export default function ContactPage() {
         title="Let's Build"
         titleAccent="Something Extraordinary"
         subtitle="Every meaningful building begins with a conversation."
-        image="/images/about-office.png"
+        image="/images/contact-us-banner.png"
         imageAlt="TOUGH Architects"
         breadcrumbs={[
           { label: "Home", href: "/" },

@@ -1,230 +1,353 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
-import prisma from "../../../../lib/prisma";
-import PageHero from "../../../../components/user/pageHero";
-import { getAwardBySlug } from "../../../../lib/queries/awards";
+// app/(user)/awards/[slug]/page.tsx
 
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import Image from 'next/image'
+import { notFound } from 'next/navigation'
+import {
+  ArrowLeft,
+  Calendar,
+  MapPin,
+  Trophy,
+  Building2,
+} from 'lucide-react'
 
-/* ---------- Metadata ---------- */
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
-}): Promise<Metadata> {
-  const award = await getAwardBySlug(params.slug);
+import prisma from '../../../../lib/prisma'
+import PageHero from '../../../../components/user/pageHero'
+import { JsonLd } from '../../../../components/seo/JsonLd'
+import {
+  Reveal,
+  Stagger,
+} from '../../../../components/animations'
 
-  if (!award) {
-    return { title: "Award Not Found" };
+type Props = {
+  params: {
+    slug: string
   }
-
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
-  const pageUrl = `${siteUrl}/awards/${award.slug}`;
-
-  const title = award.title;
-  const description = award.description || "";
-
-  return {
-    title,
-    description,
-    alternates: { canonical: pageUrl },
-  };
 }
 
-/* ---------- Page ---------- */
-export default async function AwardDetailsPage({
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  'https://tougharchitects.com'
+
+async function getAward(slug: string) {
+  return prisma.award.findFirst({
+    where: {
+      slug,
+      published: true,
+    },
+    include: {
+      category: true,
+    },
+  })
+}
+
+async function getRelatedAwards(
+  currentSlug: string
+) {
+  return prisma.award.findMany({
+    where: {
+      published: true,
+      slug: {
+        not: currentSlug,
+      },
+    },
+    orderBy: [
+      {
+        featured: 'desc',
+      },
+      {
+        year: 'desc',
+      },
+    ],
+    take: 3,
+  })
+}
+
+export async function generateMetadata({
   params,
-}: {
-  params: { slug: string };
-}) {
-  const award = await getAwardBySlug(params.slug);
+}: Props): Promise<Metadata> {
 
-  if (!award) return notFound();
+  const award = await getAward(
+    params.slug
+  )
 
-  
-    return (
-  <main className="section-dark2">
+  if (!award) {
+    return {
+      title: 'Award Not Found',
+    }
+  }
 
-    {/* HERO (UNCHANGED) */}
-    <PageHero
-      label="Award Recognition"
-      title={award.title}
-      titleAccent={award.organization || ""}
-      subtitle={award.description || ""}
-      image={award.image || "/placeholder.jpg"}
-      imageAlt={award.title}
-      breadcrumbs={[
-        { label: "Home", href: "/" },
-        { label: "Awards", href: "/awards" },
-        { label: award.title },
-      ]}
-    />
+  return {
+    title: `${award.title} | Awards`,
+    description:
+      award.description ||
+      award.title,
+    alternates: {
+      canonical: `${siteUrl}/awards/${award.slug}`,
+    },
+  }
+}
 
-    {/* ===================== */}
-    {/* NEW: AWARD META STRIP */}
-    {/* ===================== */}
-    <section className="py-10 border-b border-gray-800">
-      <div className="container mx-auto px-6">
+export default async function AwardDetailPage({
+  params,
+}: Props) {
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+  const award = await getAward(
+    params.slug
+  )
 
-          <div className="bg-black/40 p-4 rounded-lg animate-fade-up">
-            <p className="text-xs text-gray-400">Year</p>
-            <p className="text-white font-semibold">{award.year || "—"}</p>
-          </div>
+  if (!award) {
+    notFound()
+  }
 
-          <div className="bg-black/40 p-4 rounded-lg animate-fade-up">
-            <p className="text-xs text-gray-400">Location</p>
-            <p className="text-white font-semibold">{award.location || "—"}</p>
-          </div>
+  const relatedAwards =
+    await getRelatedAwards(
+      params.slug
+    )
 
-          <div className="bg-black/40 p-4 rounded-lg animate-fade-up">
-            <p className="text-xs text-gray-400">Organization</p>
-            <p className="text-white font-semibold">{award.organization || "—"}</p>
-          </div>
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'Award',
+    name: award.title,
+    description:
+      award.description,
+  }
 
-          <div className="bg-black/40 p-4 rounded-lg animate-fade-up">
-            <p className="text-xs text-gray-400">Category</p>
-            <p className="text-white font-semibold">
-              {award.category?.name || "—"}
-            </p>
-          </div>
+  return (
+    <>
+      <JsonLd data={schema} />
 
-        </div>
+      <main>
 
-      </div>
-    </section>
+        <PageHero
+          label="Recognition"
+          title={award.title}
+          titleAccent="Award"
+          subtitle={
+            award.organization ||
+            ''
+          }
+          image={
+            award.image ||
+            '/images/about-office.png'
+          }
+          imageAlt={award.title}
+          breadcrumbs={[
+            {
+              label: 'Home',
+              href: '/',
+            },
+            {
+              label: 'Awards',
+              href: '/awards',
+            },
+            {
+              label: award.title,
+            },
+          ]}
+        />
 
-    {/* ===================== */}
-    {/* AWARD OVERVIEW (ENHANCED) */}
-    {/* ===================== */}
-    <section className="py-16">
-      <div className="container mx-auto px-6">
+        <section className="section-dark py-28">
 
-        <div className="max-w-3xl animate-fade-up">
+          <div className="container-wide">
 
-          <h2 className="text-2xl font-semibold text-white mb-4">
-            Recognition Overview
-          </h2>
+            {/* back */}
+            <Reveal>
+              <Link
+                href="/awards"
+                className="inline-flex items-center gap-2 text-white hover:text-primary mb-12"
+              >
+                <ArrowLeft size={18} />
+                Back to Awards
+              </Link>
+            </Reveal>
 
-          <p className="text-gray-300 leading-relaxed">
-            {award.description}
-          </p>
+            <div className="max-w-6xl mx-auto grid lg:grid-cols-12 gap-14">
 
-          {/* BADGE STRIP */}
-          <div className="flex flex-wrap gap-3 mt-6">
+              {/* image */}
+              <Reveal className="lg:col-span-5">
 
-            {award.featured && (
-              <span className="px-3 py-1 bg-yellow-400 text-black text-xs font-bold rounded-full">
-                FEATURED AWARD
-              </span>
-            )}
+                <div className="relative aspect-[4/5] overflow-hidden rounded-xl">
 
-            {award.year && (
-              <span className="px-3 py-1 bg-white/10 text-white text-xs rounded-full">
-                {award.year}
-              </span>
-            )}
+                  <Image
+                    src={
+                      award.image ||
+                      '/images/about-office.png'
+                    }
+                    alt={award.title}
+                    fill
+                    className="object-cover"
+                  />
 
-            {award.organization && (
-              <span className="px-3 py-1 bg-white/10 text-white text-xs rounded-full">
-                {award.organization}
-              </span>
-            )}
+                </div>
 
-            {award.category?.name && (
-              <span className="px-3 py-1 bg-white/10 text-white text-xs rounded-full">
-                {award.category.name}
-              </span>
-            )}
+              </Reveal>
 
-          </div>
+              {/* content */}
+              <Reveal className="lg:col-span-7">
 
-        </div>
+                {/* meta */}
+                <div className="flex flex-wrap gap-6 mb-8">
 
-      </div>
-    </section>
+                  {award.year && (
+                    <div className="flex items-center gap-2 text-primary">
+                      <Calendar size={16} />
+                      {award.year}
+                    </div>
+                  )}
 
-    {/* ===================== */}
-    {/* CATEGORY STRUCTURE */}
-    {/* ===================== */}
-    {award.category && (
-      <section className="py-16 border-t border-gray-800">
-        <div className="container mx-auto px-6">
+                  {award.location && (
+                    <div className="flex items-center gap-2 text-primary">
+                      <MapPin size={16} />
+                      {award.location}
+                    </div>
+                  )}
 
-          <h2 className="text-2xl font-semibold mb-8 animate-fade-up">
-            Category: {award.category.name}
-          </h2>
+                </div>
 
-          {award.category.subCategories?.map((sub: any, i: number) => (
-            <div
-              key={sub.id}
-              className="mb-14 animate-fade-up"
-              style={{ animationDelay: `${i * 0.1}s` }}
-            >
+                <h1 className="text-4xl md:text-5xl text-white mb-8 font-bold">
+                  {award.title}
+                </h1>
 
-              <h3 className="text-xl font-medium mb-6 text-white">
-                {sub.name}
-              </h3>
+                <div className="space-y-5 text-white/70 leading-8">
 
-              <div className="grid md:grid-cols-2 gap-6">
+                  <p>
+                    {award.description}
+                  </p>
 
-                {sub.projects?.map((project: any) => (
-                  <div
-                    key={project.id}
-                    className="bg-black/40 p-5 rounded-xl hover:bg-black/60 transition"
-                  >
+                  <p>
+                    This recognition
+                    reflects our
+                    commitment to
+                    timeless
+                    architecture,
+                    sustainable
+                    innovation,
+                    and world-class
+                    spatial design.
+                  </p>
 
-                    <h4 className="text-lg font-semibold text-white">
-                      {project.title}
-                    </h4>
+                </div>
 
-                    <p className="text-sm text-gray-400 mb-4">
-                      {project.location}
+                {/* info cards */}
+                <div className="grid md:grid-cols-2 gap-6 mt-12">
+
+                  <div className="card-surface p-6">
+
+                    <Trophy
+                      className="text-primary mb-4"
+                      size={22}
+                    />
+
+                    <p className="text-white/60 text-sm mb-2">
+                      Awarded By
                     </p>
 
-                    <div className="grid grid-cols-3 gap-2">
-                      {project.gallery?.map((img: any) => (
-                        <div
-                          key={img.id}
-                          className="relative h-24 overflow-hidden rounded-md"
-                        >
-                          <Image
-                            src={img.image}
-                            alt="gallery"
-                            fill
-                            className="object-cover hover:scale-110 transition duration-500"
-                          />
-                        </div>
-                      ))}
-                    </div>
+                    <p className="text-white font-semibold">
+                      {award.organization}
+                    </p>
 
                   </div>
-                ))}
 
-              </div>
+                  <div className="card-surface p-6">
+
+                    <Building2
+                      className="text-primary mb-4"
+                      size={22}
+                    />
+
+                    <p className="text-white/60 text-sm mb-2">
+                      Category
+                    </p>
+
+                    <p className="text-white font-semibold">
+                      {award.category?.name}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </Reveal>
 
             </div>
-          ))}
 
-        </div>
-      </section>
-    )}
+            {/* related */}
+            {relatedAwards.length >
+              0 && (
 
-    {/* BACK */}
-    <section className="py-12 text-center">
-      <Link
-        href="/awards"
-        className="text-blue-400 hover:text-blue-300 transition"
-      >
-        ← Back to Awards
-      </Link>
-    </section>
+              <section className="mt-28">
 
-    
+                <Reveal>
+                  <h2 className="text-3xl text-white mb-10">
+                    More Recognition
+                  </h2>
+                </Reveal>
 
-  </main>
+                <Stagger className="grid md:grid-cols-3 gap-8">
 
-  );
+                  {relatedAwards.map(
+                    (item) => (
+
+                      <Link
+                        key={item.id}
+                        href={`/awards/${item.slug}`}
+                        className="group"
+                      >
+
+                        <article className="card-surface overflow-hidden h-full">
+
+                          <div className="relative aspect-[4/3] overflow-hidden">
+
+                            <Image
+                              src={
+                                item.image ||
+                                '/images/about-office.png'
+                              }
+                              alt={
+                                item.title
+                              }
+                              fill
+                              className="object-cover group-hover:scale-105 transition duration-700"
+                            />
+
+                          </div>
+
+                          <div className="p-6">
+
+                            <p className="text-primary text-sm mb-3">
+                              {
+                                item.year
+                              }
+                            </p>
+
+                            <h3 className="text-white text-xl">
+                              {
+                                item.title
+                              }
+                            </h3>
+
+                          </div>
+
+                        </article>
+
+                      </Link>
+
+                    )
+                  )}
+
+                </Stagger>
+
+              </section>
+
+            )}
+
+          </div>
+
+        </section>
+
+      </main>
+    </>
+  )
 }

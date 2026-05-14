@@ -86,7 +86,6 @@ export default async function CategoryPage({
             ? categorySlugs.data
             : [];
 
-    console.log(categoryDetails);
 
     return (
         <>
@@ -110,51 +109,49 @@ export default async function CategoryPage({
                     style={{ padding: "var(--section-py) 0" }}
                 >
                     <div className="container-wide">
-                        <Stagger className="grid md:grid-cols-2 gap-8">
+                        <Stagger className="grid md:grid-cols-3 gap-8">
 
                             {subCategories.map((project: any) => (
 
                                 <Reveal key={project.slug}>
                                     <Link
-                                        href={`/project-sub-category/${project?.slug}`}
-                                        className="group block"
+                                        href={`/project-sub-category/${project.slug}`}
+                                        className="group block h-full"
                                     >
                                         <article
-                                            className="card-surface overflow-hidden"
+                                            className="card-surface overflow-hidden h-full flex flex-col"
                                         >
+
+                                            {/* image */}
                                             <div
-                                                className="relative overflow-hidden"
+                                                className="relative overflow-hidden flex-shrink-0"
                                                 style={{ aspectRatio: "16/10" }}
                                             >
                                                 <Image
                                                     src={project.image}
                                                     alt={project.name}
                                                     fill
-                                                    className="object-cover transition-transform duration-700 group-hover:scale-105 w-100"
+                                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
                                                 />
                                             </div>
 
-                                            <div className="p-8">
-
-                                                <p className="section-label">
-                                                    {project.slug}
-                                                </p>
+                                            {/* content */}
+                                            <div className="py-5 px-6 flex flex-col flex-1">
 
                                                 <h2
-                                                    className="mt-3"
+                                                    className="mt-2"
                                                     style={{
-                                                        fontFamily:
-                                                            "var(--font-playfair)",
-                                                        fontSize: "1.6rem",
-                                                        color:
-                                                            "var(--color-white)",
+                                                        fontFamily: "var(--font-playfair)",
+                                                        fontSize: "1.45rem",
+                                                        color: "var(--color-white)",
                                                     }}
                                                 >
                                                     {project.name}
                                                 </h2>
 
+                                                {/* fixed height text */}
                                                 <p
-                                                    className="mt-4"
+                                                    className="mt-4 flex-1 line-clamp-4"
                                                     style={{
                                                         fontSize: ".9rem",
                                                         lineHeight: 1.8,
@@ -163,15 +160,34 @@ export default async function CategoryPage({
                                                     {project.description}
                                                 </p>
 
+                                                {/* always bottom */}
+                                                <div className="mt-6 flex items-center gap-3 text-primary uppercase text-xs tracking-[.2em]">
+
+                                                    Explore
+
+                                                    <svg
+                                                        width="14"
+                                                        height="14"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
+                                                        className="group-hover:translate-x-1 transition"
+                                                    >
+                                                        <path d="M5 12h14M12 5l7 7-7 7" />
+                                                    </svg>
+
+                                                </div>
+
                                             </div>
 
                                         </article>
                                     </Link>
-
                                 </Reveal>
-                            ))}
-                        </Stagger>
 
+                            ))}
+
+                        </Stagger>
                     </div>
                 </section>
 

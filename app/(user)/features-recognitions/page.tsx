@@ -128,7 +128,7 @@ export default async function FeaturedRecognitionsPage() {
           title="Featured"
           titleAccent="Worldwide"
           subtitle="Four decades of design excellence recognised by global publications, institutions, and industry leaders."
-          image="/images/about-office.png"
+          image="/images/features-recognitions-banner.png"
           imageAlt="TOUGH Architects recognitions"
           breadcrumbs={[
             {

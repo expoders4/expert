@@ -1023,3 +1023,60 @@ input, textarea, select {
     grid-column: span 12 !important;
   }
 }
+
+
+
+/* wrapper */
+.phone-wrapper {
+  width: 100%;
+}
+
+/* main */
+.phone-input {
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--color-dark4);
+  min-height: 60px;
+  padding: 0 18px;
+  color: white;
+}
+
+/* input */
+.phone-input .PhoneInputInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  font-size: .95rem;
+}
+
+/* country button */
+.phone-input .PhoneInputCountry {
+  margin-right: 14px;
+}
+
+.phone-input .PhoneInputCountrySelect {
+  background: transparent;
+  color: white;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+/* dropdown dark */
+.phone-input .PhoneInputCountrySelect option {
+  background: #111;
+  color: white;
+}
+
+/* arrow + icon */
+.phone-input svg {
+  color: var(--color-primary);
+}
+
+/* focus */
+.phone-input:focus-within {
+  border-color: var(--color-primary);
+}
