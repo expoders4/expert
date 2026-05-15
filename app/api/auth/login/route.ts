@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     }
 
     // 3. Create JWT token
-    const token = jwt.sign(
+    const accessToken = jwt.sign(
       {
         adminId: admin.id,
         email: admin.email,
@@ -52,6 +52,7 @@ export async function POST(req: Request) {
     // 4. Response
     const response = NextResponse.json({
       message: "Login successful",
+      accessToken,
       admin: {
         id: admin.id,
         name: admin.name,
@@ -60,7 +61,7 @@ export async function POST(req: Request) {
     });
 
     // 5. Set cookie
-    response.cookies.set("admin_token", token, {
+    response.cookies.set("admin_token", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

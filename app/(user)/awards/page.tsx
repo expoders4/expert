@@ -162,7 +162,7 @@ export default async function AwardsPage() {
             title={`${totalAwards > 0 ? totalAwards : 18} Awards for`}
             titleAccent="Design Excellence"
             subtitle="Four decades of architectural ambition, recognised by the world's most respected design institutions — from the AIA to RIBA, Dezeen, and beyond."
-            image="/images/award-banner.png"
+            image="/images/banner/award.png"
             imageAlt="Award-winning TOUGH Architects commercial architecture interior"
             breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Awards & Recognition' }]}
           />

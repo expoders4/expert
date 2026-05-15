@@ -75,11 +75,18 @@ export default function PageHero({
       </div>
 
       {/* Gradient overlay */}
-      <div
+      {/* <div
         className="absolute inset-0 z-[1]"
         style={{
           background:
             'linear-gradient(to top, rgba(13,13,13,1) 0%, rgba(13,13,13,0.6) 50%, rgba(13,13,13,0.35) 100%)',
+        }}
+      /> */}
+      <div
+        className="absolute inset-0 z-[1]"
+        style={{
+          background:
+            'linear-gradient(to top, rgba(10,10,10,1) 0%, rgba(10,10,10,0.85) 45%, rgba(10,10,10,0.55) 100%)',
         }}
       />
 

@@ -142,7 +142,7 @@ export default function CommonTable({
                     )}
                 </tbody>
             </table>
-
+                    
             {totalPages &&
                 totalPages > 1 && (
                     <div className="flex items-center justify-center gap-2 px-6 py-5 border-t border-stone-100">
@@ -159,6 +159,7 @@ export default function CommonTable({
                                 })
 
                             return (
+                                
                                 <Link
                                     key={page}
                                     href={`?${params.toString()}`}

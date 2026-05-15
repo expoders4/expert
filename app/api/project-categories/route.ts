@@ -18,3 +18,27 @@ export async function GET() {
     data
   );
 }
+
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+
+    const data = await prisma.projectCategory.create({
+      data: {
+        name: body.name,
+        slug: body.slug,
+        description: body.description,
+        image: body.image,
+        sortOrder: body.sortOrder || 0,
+      },
+    });
+
+    return NextResponse.json(data);
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}

@@ -56,7 +56,7 @@ export default async function ProjectsPage() {
           title="Project"
           titleAccent="Categories"
           subtitle="Explore our work across sectors, scales, and continents."
-          image="/images/project-banner.png"
+          image="/images/banner/project.png"
           imageAlt="TOUGH Architects recognitions"
           breadcrumbs={[
             { label: "Home", href: "/" },

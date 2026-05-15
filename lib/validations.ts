@@ -410,6 +410,122 @@ export type ContactInput =
 
 
 
+export const projectFormSchema = z.object({
+  title: z
+    .string()
+    .min(2, 'Title is required')
+    .max(200, 'Maximum 200 characters'),
+
+  slug: z
+    .string()
+    .min(2, 'Slug is required'),
+
+  subCategoryId: z
+    .string()
+    .min(1, 'Sub-category is required'),
+
+  shortDescription: z
+    .string()
+    .optional()
+    .or(z.literal('')),
+
+  description: z
+    .string()
+    .optional()
+    .or(z.literal('')),
+
+  location: z
+    .string()
+    .optional()
+    .or(z.literal('')),
+
+  year: z
+    .preprocess(
+      (val) =>
+        val === '' ||
+        val === null ||
+        val === undefined
+          ? undefined
+          : Number(val),
+      z.number().min(1900).max(2100).optional()
+    ),
+
+  clientName: z
+    .string()
+    .optional()
+    .or(z.literal('')),
+
+  area: z
+    .string()
+    .optional()
+    .or(z.literal('')),
+
+  thumbnail: z
+    .string()
+    .optional()
+    .or(z.literal('')),
+
+  coverImage: z
+    .string()
+    .optional()
+    .or(z.literal('')),
+
+  status: z
+    .enum(['CONCEPT', 'ONGOING', 'COMPLETED'])
+    .optional()
+    .or(z.literal('')),
+
+  featured: z
+    .boolean()
+    .default(false),
+
+  published: z
+    .boolean()
+    .default(true),
+
+  sortOrder: z
+    .preprocess(
+      (val) =>
+        val === '' || val === null || val === undefined
+          ? 0
+          : Number(val),
+      z.number().default(0)
+    ),
+
+  metaTitle: z
+    .string()
+    .optional()
+    .or(z.literal('')),
+
+  metaDescription: z
+    .string()
+    .optional()
+    .or(z.literal('')),
+
+  keywords: z
+    .string()
+    .optional()
+    .or(z.literal('')),
+
+  gallery: z
+    .array(
+      z.object({
+        image: z.string(),
+        title: z.string().optional().or(z.literal('')),
+        description: z.string().optional().or(z.literal('')),
+        sortOrder: z.number().optional(),
+      })
+    )
+    .default([]),
+
+  teamIds: z
+    .array(z.string())
+    .default([]),
+})
+
+export type ProjectFormInput = z.infer<typeof projectFormSchema>
+
+
 export const featureSchema = z.object({
   title: z
     .string()

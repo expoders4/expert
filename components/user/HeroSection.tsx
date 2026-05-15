@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState, useEffect, useCallback } from 'react';
 
 const slides = [
@@ -9,7 +10,7 @@ const slides = [
     label: 'Residential Excellence',
     heading: ['Crafting', 'Timeless', 'Spaces'],
     sub: 'Architecture that tells your story — from concept to completion, we build futures worth living in.',
-    cta: { label: 'Explore Our Work', href: '/portfolio' },
+    cta: { label: 'Explore Our Work', href: '/project' },
     cta2: { label: 'Our Story', href: '/about' },
   },
   {
@@ -18,8 +19,8 @@ const slides = [
     label: 'Commercial Design',
     heading: ['Bold', 'Visions,', 'Built'],
     sub: 'Transforming skylines and cityscapes through precision engineering and artistic brilliance.',
-    cta: { label: 'View Portfolio', href: '/portfolio' },
-    cta2: { label: 'Our Services', href: '/services' },
+    cta: { label: 'View Portfolio', href: '/project' },
+    cta2: { label: 'Our Services', href: '/about' },
   },
   {
     id: 2,
@@ -27,7 +28,7 @@ const slides = [
     label: 'Interior Mastery',
     heading: ['Interior', 'Worlds', 'Reimagined'],
     sub: 'Every room, every corner — a curated composition of light, material, and human experience.',
-    cta: { label: 'See Our Interiors', href: '/portfolio' },
+    cta: { label: 'See Our Interiors', href: '/project-category/interior' },
     cta2: { label: 'Get a Quote', href: '/contact' },
   },
 ];
@@ -35,7 +36,7 @@ const slides = [
 export default function HeroSection() {
   const [current, setCurrent] = useState(0);
   const [animating, setAnimating] = useState(false);
-
+const router = useRouter()
   const goTo = useCallback((idx: number) => {
     if (animating || idx === current) return;
     setAnimating(true);
@@ -52,7 +53,8 @@ export default function HeroSection() {
   }, [next]);
 
   const handleCta = (href: string) => {
-    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+    router.replace(href)
+    // document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (

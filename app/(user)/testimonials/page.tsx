@@ -423,7 +423,7 @@ export default async function TestimonialsPage() {
           title="What Our Clients"
           titleAccent="Say"
           subtitle="Real stories from homeowners, developers, hospitality brands, and visionary partners worldwide."
-          image="/images/testimonial-banner.png"
+          image="/images/banner/testimonial.png"
           imageAlt="TOUGH Architects clients"
           breadcrumbs={[
             {

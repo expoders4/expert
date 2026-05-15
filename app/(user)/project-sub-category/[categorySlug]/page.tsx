@@ -6,16 +6,6 @@ import { cache } from "react";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tougharchitects.com";
 
-// const getSubCategory = cache(async (slug: string) => {
-//     return prisma.project.findMany({
-//         where: { subCategory: { slug } },
-//         include: {
-//             subCategory: { include: { category: true } },
-//             gallery: { orderBy: { sortOrder: "asc" } },
-//         },
-//         orderBy: { sortOrder: "asc" },
-//     });
-// });
 
 const getSubCategory = cache(async (slug: string) => {
     return prisma.projectSubCategory.findFirst({

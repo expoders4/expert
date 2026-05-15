@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Image from 'next/image'
 
 const navLinks = [
   { label: 'Home', href: '/' },
@@ -42,9 +43,9 @@ export default function Header() {
     <>
       {/* Header */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${scrolled
-            ? 'bg-background/90 backdrop-blur-xl border-b border-white/5 py-4'
-            : 'py-7'
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 py-4 ${scrolled
+          ? 'bg-background/90 backdrop-blur-xl border-b border-white/5'
+          : 'bg-black'
           }`}
       >
         <div className="mx-auto px-6 lg:px-12 flex items-center justify-between container-wide">
@@ -53,10 +54,17 @@ export default function Header() {
           <Link
             href="/"
             aria-label="ARCHSTUDIO Home"
-            className="flex items-center gap-3"
+            className="flex items-center gap-2"
           >
-            <div className="w-7 h-7 border border-gold flex items-center justify-center">
-              <div className="w-3 h-3 bg-gold" />
+            <div className="flex items-center justify-center">
+              <Image
+                src="/images/logo.png"
+                alt="ARCHSTUDIO Logo"
+                width={40}
+                height={40}
+                className="object-contain"
+                priority
+              />
             </div>
 
             <span className="font-playfair text-xl tracking-[0.15em] text-white font-semibold">
@@ -71,8 +79,8 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 className={`font-playfair transition-colors ${pathname === link.href
-                    ? 'text-gold'
-                    : 'text-white hover:text-gold'
+                  ? 'text-gold'
+                  : 'text-white hover:text-gold'
                   }`}
               >
                 {link.label}
@@ -152,8 +160,8 @@ export default function Header() {
                       href={link.href}
                       onClick={() => setMenuOpen(false)}
                       className={`font-playfair text-xl transition-colors ${pathname === link.href
-                          ? 'text-gold'
-                          : 'text-white hover:text-gold'
+                        ? 'text-gold'
+                        : 'text-white hover:text-gold'
                         }`}
                     >
                       {link.label}
